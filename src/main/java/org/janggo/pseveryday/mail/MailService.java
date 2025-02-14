@@ -30,13 +30,12 @@ public class MailService {
 
             Context context = new Context();
             context.setVariable("email", email);
-            String htmlContent = templateEngine.process("welcome-mail", context);
+            String htmlContent = templateEngine.process("mail/welcome-mail", context);
 
             helper.setText(htmlContent, true);
             helper.setTo(email);
             helper.setFrom(sender);
             javaMailSender.send(mimeMessage);
-
         }catch (MessagingException e){
             e.printStackTrace();
         }
