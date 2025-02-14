@@ -12,5 +12,4 @@ public class Subscriber {
     @Column(name = "email")
     private String email;
 
-
 }
