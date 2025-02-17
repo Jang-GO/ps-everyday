@@ -22,7 +22,7 @@ public class VerificationService {
         String verificationCode = String.format("%06d",generateVerificationCode());
         verificationCodes.put(email, verificationCode);
 
-        scheduler.schedule(() -> verificationCodes.remove(verificationCode),
+        scheduler.schedule(() -> verificationCodes.remove(email),
                 CODE_EXPIRE_SECONDS, TimeUnit.SECONDS);
 
         return verificationCode;
@@ -30,6 +30,5 @@ public class VerificationService {
 
     private int generateVerificationCode() {
         return secureRandom.nextInt(1000000); // 6자리 숫자 생성
-
     }
 }
