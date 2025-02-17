@@ -36,10 +36,18 @@ public class SubscriberController {
 
     // 인증 코드 확인
     @PostMapping("/verify")
-    public String verify(@RequestParam String verificationCode, Model model) {
-        // 인증 코드 검증 로직을 추가합니다
-        model.addAttribute("message", "인증 완료되었습니다!");
+    public String verify(@RequestParam String email, @RequestParam String verificationCode, Model model) {
+        boolean isVerified = verificationService.verifyCode(email, verificationCode);
+
+        if (isVerified) {
+            model.addAttribute("message", "인증 완료되었습니다!");
+            model.addAttribute("showVerificationForm", false); // 인증 성공하면 입력 폼 숨김
+        } else {
+            model.addAttribute("message", "인증 코드가 잘못되었습니다. 다시 시도해 주세요.");
+            model.addAttribute("showVerificationForm", true); // 인증 실패해도 계속 입력 폼 표시
+        }
+
+        model.addAttribute("email", email); // 이메일 정보를 유지하여 계속 폼에 사용
         return "home";
     }
 }
-
