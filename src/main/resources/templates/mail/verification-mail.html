@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이메일 인증</title>
+</head>
+<body style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
+<div style="max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #333;">📌 PS Everyday - 이메일 인증</h2>
+    <p style="color: #666;">안녕하세요! <span th:text="${email}"></span>님,</p>
+    <p style="color: #666;">아래 인증 코드를 입력하여 이메일 인증을 완료하세요.</p>
+    <h1 style="color: #007bff; font-size: 24px; font-weight: bold; margin: 20px 0;" th:text="${verificationCode}"></h1>
+    <p style="color: #999;">이 인증 코드는 5분 후 만료됩니다.</p>
+</div>
+</body>
+</html>

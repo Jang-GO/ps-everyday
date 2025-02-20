@@ -9,7 +9,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 @RequiredArgsConstructor
@@ -20,24 +19,27 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public void sendMail(String email) {
+    public void sendVerifyMail(String email, String verificationCode) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        try{
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-            helper.setSubject("하윙");
-
-            Context context = new Context();
-            context.setVariable("email", email);
-            String htmlContent = templateEngine.process("mail/welcome-mail", context);
-
-            helper.setText(htmlContent, true);
+            helper.setSubject("📌 PS Everyday - 이메일 인증 코드");
             helper.setTo(email);
             helper.setFrom(sender);
+
+            // 타임리프 템플릿에서 이메일 본문 생성
+            Context context = new Context();
+            context.setVariable("email", email);
+            context.setVariable("verificationCode", verificationCode);
+            String htmlContent = templateEngine.process("mail/verification-mail", context);
+
+            helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
-        }catch (MessagingException e){
+        } catch (MessagingException e) {
             e.printStackTrace();
+            throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
         }
     }
 }
