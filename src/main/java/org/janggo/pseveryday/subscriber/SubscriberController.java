@@ -15,6 +15,7 @@ public class SubscriberController {
 
     private final VerificationService verificationService;
     private final MailService mailService;
+    private final SubscriberRepository subscriberRepository;
 
     // 화면 조회
     @GetMapping("/")
@@ -40,7 +41,11 @@ public class SubscriberController {
         boolean isVerified = verificationService.verifyCode(email, verificationCode);
 
         if (isVerified) {
-            model.addAttribute("message", "인증 완료되었습니다!");
+            // 인증이 완료되면 사용자를 DB에 저장
+            Subscriber subscriber = new Subscriber(email);
+            subscriberRepository.save(subscriber);  // DB에 저장
+
+            model.addAttribute("message", "인증 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
             model.addAttribute("showVerificationForm", false); // 인증 성공하면 입력 폼 숨김
         } else {
             model.addAttribute("message", "인증 코드가 잘못되었습니다. 다시 시도해 주세요.");
