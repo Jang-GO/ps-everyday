@@ -23,3 +23,8 @@ spring:
           ssl:
             enable: true
             trust: smtp.naver.com
+
+boj:
+  page:
+    start: 1
+    end: 320

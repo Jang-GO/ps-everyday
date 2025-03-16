@@ -1,7 +1,6 @@
-package org.janggo.pseveryday.problem;
+package org.janggo.pseveryday.problem.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.Getter;
 
