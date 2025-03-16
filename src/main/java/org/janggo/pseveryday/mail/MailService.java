@@ -53,7 +53,6 @@ public class MailService {
             helper.setTo(email);
             helper.setFrom(sender);
 
-            // 타임리프 템플릿을 사용하여 HTML 이메일 생성
             String link = "https://www.acmicpc.net/problem/" + problem.getProblemId();
 
             Context context = new Context();
