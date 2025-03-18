@@ -17,7 +17,7 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
-    @Value("${spring.mail.username}")
+    @Value("${mail-username}")
     private String sender;
 
     public void sendVerifyMail(String email, String verificationCode) {
