@@ -26,7 +26,7 @@ public class SubscriberController {
 
     // 이메일 등록 후 인증 코드 전송
     @PostMapping("/subscribe")
-    public String subscribe(@RequestParam String email, Model model) {
+    public String subscribe(@RequestParam("email") String email, Model model) {
         String verificationCode = verificationService.generationVerificationCode(email);
         mailService.sendVerifyMail(email, verificationCode);
 
@@ -37,7 +37,7 @@ public class SubscriberController {
 
     // 인증 코드 확인
     @PostMapping("/verify")
-    public String verify(@RequestParam String email, @RequestParam String verificationCode, Model model) {
+    public String verify(@RequestParam("email") String email, @RequestParam("verificationCode") String verificationCode, Model model) {
         boolean isVerified = verificationService.verifyCode(email, verificationCode);
 
         if (isVerified) {

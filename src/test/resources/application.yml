@@ -2,7 +2,7 @@ spring:
   application:
     name: ps-everyday
   profiles:
-    active: local
+    active: test
   datasource:
     url: jdbc:mysql://${ps.db.endpoint}/${ps.db.dbname}?useSSL=false&serverTimezone=Asia/Seoul
     username: ${MYSQL_USERNAME}

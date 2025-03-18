@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PS Everyday - 매일 알고리즘 문제 추천</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+<div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold text-gray-800">📌 PS Everyday</h1>
+    <p class="text-gray-600 mt-2">매일 알고리즘 문제를 추천받고 싶다면 이메일을 등록하세요!</p>
+
+    <form th:action="@{/subscribe}" method="post" class="mt-6">
+        <div class="flex flex-col">
+            <label for="email" class="text-left text-sm font-medium text-gray-700">이메일</label>
+            <input type="email" id="email" name="email" required
+                   class="mt-1 p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+        <button type="submit"
+                class="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+            ✅ 구독하기
+        </button>
+    </form>
+
+    <div th:if="${showVerificationForm}" class="mt-4">
+        <h3 class="text-lg font-semibold">인증 코드 입력</h3>
+        <form th:action="@{/verify}" method="post" class="mt-4">
+            <input type="hidden" name="email" th:value="${email}">
+            <div class="flex flex-col">
+                <label for="verificationCode" class="text-left text-sm font-medium text-gray-700">인증 코드</label>
+                <input type="text" id="verificationCode" name="verificationCode" required
+                       class="mt-1 p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
+            </div>
+            <button type="submit"
+                    class="mt-4 bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                인증하기
+            </button>
+        </form>
+    </div>
+
+    <div th:if="${message}" th:text="${message}" class="mt-4 text-green-600 font-semibold"></div>
+</div>
+
+</body>
+</html>

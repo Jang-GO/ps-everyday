@@ -3,6 +3,7 @@ package org.janggo.pseveryday.mail;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,7 +17,7 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
-    @Value("${spring.mail.username}")
+    @Value("${mail-username}")
     private String sender;
 
     public void sendVerifyMail(String email, String verificationCode) {
@@ -39,6 +40,30 @@ public class MailService {
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();
+            throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
+        }
+    }
+
+    public void sendProblemMail(String email, SolvedAcResponse.Problem problem) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setSubject("🎯 오늘의 알고리즘 문제");
+            helper.setTo(email);
+            helper.setFrom(sender);
+
+            String link = "https://www.acmicpc.net/problem/" + problem.getProblemId();
+
+            Context context = new Context();
+            context.setVariable("email", email);
+            context.setVariable("problem", problem);
+            context.setVariable("link", link);
+            String htmlContent = templateEngine.process("mail/problem-mail", context);
+
+            helper.setText(htmlContent, true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
         }
     }
