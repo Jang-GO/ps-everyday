@@ -47,6 +47,5 @@ class ProblemSchedulerTest {
         // Then
         Mockito.verify(solvedAcService).getRandomProblem();
         Mockito.verify(mailService).sendProblemMail(testUser.getEmail(),mockProblem);
-
     }
 }

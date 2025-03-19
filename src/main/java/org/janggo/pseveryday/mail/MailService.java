@@ -67,4 +67,28 @@ public class MailService {
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
         }
     }
+
+    public void sendGreetingMail(String email) {
+        // JavaMailSender로 이메일 객체 생성
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true); // true: 멀티파트 지원
+            helper.setSubject("🎉 PS Everyday 구독을 환영합니다!");
+            helper.setTo(email);
+            helper.setFrom(sender);
+
+            // Thymeleaf Context 설정
+            Context context = new Context();
+            context.setVariable("email", email); // HTML에서 사용할 email 변수 전달
+
+            // 템플릿 렌더링 (subscription-mail.html)
+            String htmlContent = templateEngine.process("mail/welcome-mail", context);
+
+            helper.setText(htmlContent, true); // true: HTML 콘텐츠로 설정
+            javaMailSender.send(mimeMessage); // 이메일 전송
+        } catch (MessagingException e) {
+            throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
+        }
+    }
 }
