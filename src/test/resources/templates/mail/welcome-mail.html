@@ -20,11 +20,16 @@
             text-align: center;
         }
         h1 {
-            color: #4CAF50;
+            color: #007bff;
+            font-size: 24px;
         }
         p {
             font-size: 16px;
             color: #333;
+        }
+        .highlight {
+            color: #4CAF50;
+            font-weight: bold;
         }
         .footer {
             margin-top: 20px;
@@ -36,9 +41,9 @@
 <body>
 <div class="container">
     <h1>🎉 PS Everyday 구독을 환영합니다! 🎉</h1>
-    <p><b><span th:text="${email}"></span></b>님, PS Everyday 구독해 주셔서 감사합니다.</p>
-    <p>이제부터 매일 랜덤 알고리즘 문제를 이메일로 받아보실 수 있습니다! 🚀</p>
-    <p>문제를 풀며 알고리즘 실력을 키워보세요!</p>
+    <p><b><span th:text="${email}" class="highlight"></span></b>님, PS Everyday를 구독해 주셔서 감사합니다. 🌟</p>
+    <p>이제 매일 랜덤 알고리즘 문제를 이메일로 받아보실 수 있습니다! 🚀</p>
+    <p>문제를 풀며 알고리즘 실력을 키워보세요. 최고의 하루 되세요! 😊</p>
     <div class="footer">
         <p>📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
     </div>
