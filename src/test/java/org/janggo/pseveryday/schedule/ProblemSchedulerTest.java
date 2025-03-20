@@ -2,6 +2,7 @@ package org.janggo.pseveryday.schedule;
 
 import org.janggo.pseveryday.mail.MailService;
 import org.janggo.pseveryday.problem.SolvedAcService;
+import org.janggo.pseveryday.problem.dto.ProblemLevel;
 import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 import org.janggo.pseveryday.subscriber.Subscriber;
 import org.janggo.pseveryday.subscriber.SubscriberRepository;
@@ -37,7 +38,7 @@ class ProblemSchedulerTest {
         SolvedAcResponse.Problem mockProblem = new SolvedAcResponse.Problem();
         mockProblem.setProblemId(12345);
         mockProblem.setTitleKo("테스트용 제목");
-        mockProblem.setLevel(1);
+        mockProblem.setLevel(ProblemLevel.fromLevel(2));
 
         Mockito.when(solvedAcService.getRandomProblem()).thenReturn(mockProblem);
         Mockito.when(subscriberRepository.findAll()).thenReturn(List.of(testUser));

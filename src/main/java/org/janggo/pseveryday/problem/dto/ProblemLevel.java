@@ -45,6 +45,24 @@ public enum ProblemLevel {
         this.displayName = displayName;
     }
 
+    public String getColor(int level) {
+        if (level >= 1 && level <= 5) { // Bronze
+            return "#CD7F32"; // 브론즈색 (청동)
+        } else if (level >= 6 && level <= 10) { // Silver
+            return "#C0C0C0"; // 실버색 (은색)
+        } else if (level >= 11 && level <= 15) { // Gold
+            return "#FFD700"; // 골드색
+        } else if (level >= 16 && level <= 20) { // Platinum
+            return "#00E5EE"; // 플래티넘색
+        } else if (level >= 21 && level <= 25) { // Diamond
+            return "#1E90FF"; // 다이아색
+        } else if (level >= 26 && level <= 30) { // Ruby
+            return "#E0115F"; // 루비색
+        } else { // Unrated or default
+            return "#888888"; // 기본값 (회색)
+        }
+    }
+
     @JsonCreator
     public static ProblemLevel fromLevel(int level) {
         for (ProblemLevel problemLevel : ProblemLevel.values()) {
