@@ -23,7 +23,7 @@ public class ProblemScheduler {
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
 
-//    @Scheduled(cron = "*/10 * * * * *") // 매일 오전 8시 실행
+    @Scheduled(cron = "*/10 * * * * *") // 매일 오전 8시 실행
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
 
