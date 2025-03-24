@@ -21,7 +21,7 @@ class MailServiceTest {
     void testSendProblemMail() {
         // 테스트용 데이터 준비
         String email = "jang8195@naver.com"; // 자신의 이메일 주소 입력
-        SolvedAcResponse.Problem problem = solvedAcService.getRandomProblem(" ");
+        SolvedAcResponse.Problem problem = solvedAcService.getRandomProblem();
         // 메일 전송 테스트
         mailService.sendProblemMail(email, problem);
 

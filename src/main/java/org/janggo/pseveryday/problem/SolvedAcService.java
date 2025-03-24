@@ -13,11 +13,12 @@ import java.util.Random;
 public class SolvedAcService {
     private final SolvedAcProperties properties;
     private final SolvedAcClient solvedAcClient;
+    private static final String RANDOM_QUERY = " ";
 
-    public SolvedAcResponse.Problem getRandomProblem(String query){
+    public SolvedAcResponse.Problem getRandomProblem(){
         Random random = new Random();
         int randomPage = random.nextInt(properties.getStart(), properties.getEnd()+1);
-        SolvedAcResponse response = solvedAcClient.searchProblem(" ", "id", "asc", randomPage);
+        SolvedAcResponse response = solvedAcClient.searchProblem(RANDOM_QUERY, "id", "asc", randomPage);
         List<SolvedAcResponse.Problem> problems = response.getItems();
 
         if (problems == null || problems.isEmpty()) {

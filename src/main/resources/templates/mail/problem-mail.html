@@ -3,81 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>오늘의 알고리즘 문제</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 60%;
-            margin: 30px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        h2 {
-            color: #007bff;
-            font-size: 24px;
-        }
-        p {
-            font-size: 16px;
-            color: #333;
-        }
-        .problem-box {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        h3 {
-            color: #007bff;
-            font-size: 20px;
-        }
-        .bold {
-            font-weight: bold;
-        }
-        .problem-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            color: #ffffff;
-            background: #007bff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .problem-link:hover {
-            background: #0056b3;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #888;
-        }
-    </style>
 </head>
-<body>
-<div class="container">
-    <h2>🎯 오늘의 알고리즘 문제</h2>
-    <p>안녕하세요, <span class="bold">PS Everyday</span>입니다!</p>
-    <p>오늘의 랜덤 문제를 추천드립니다:</p>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="width: 60%; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+    <h2 style="color: #007bff; font-size: 24px;">🎯 오늘의 알고리즘 문제</h2>
+    <p style="font-size: 16px; color: #333;">안녕하세요, <span style="font-weight: bold;">PS Everyday</span>입니다!</p>
+    <p style="font-size: 16px; color: #333;">오늘의 랜덤 문제를 추천드립니다:</p>
 
-    <div class="problem-box">
-        <h3 th:text="${problem.titleKo}"></h3>
-        <p><b>난이도:</b> <span th:text="${problem.level}"></span></p>
-        <a th:href="@{link}" class="problem-link">
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: #007bff; font-size: 20px;" th:text="${problem.titleKo}"></h3>
+        <p style="font-size: 16px; color: #333;">
+            <b>난이도: <span th:style="'color:' + ${problem.level.getColor(problem.level.getLevel())}" th:text="${problem.level.getDisplayName()}"></span> </b>
+        </p>
+        <a th:href="${link}" style="display: inline-block; margin-top: 10px; padding: 10px 20px; color: #ffffff; background: #007bff; text-decoration: none; border-radius: 5px; font-weight: bold;">
             🔗 문제 풀러 가기
         </a>
     </div>
 
-    <p>즐거운 코딩 하세요! 🚀</p>
-    <div class="footer">
-        <p>📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
+    <p style="font-size: 16px; color: #333;">즐거운 코딩 하세요! 🚀</p>
+    <div style="margin-top: 20px; font-size: 14px; color: #888;">
+        <p style="font-size: 14px; color: #888;">📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
     </div>
 </div>
 </body>

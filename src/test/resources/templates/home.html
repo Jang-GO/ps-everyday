@@ -3,43 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>PS Everyday - 매일 알고리즘 문제 추천</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
 
-<div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md text-center">
-    <h1 class="text-2xl font-bold text-gray-800">📌 PS Everyday</h1>
-    <p class="text-gray-600 mt-2">매일 알고리즘 문제를 추천받고 싶다면 이메일을 등록하세요!</p>
+<div style="background: #ffffff; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px; width: 100%; max-width: 400px; text-align: center;">
+    <h1 style="color: #007bff; font-size: 24px; font-weight: bold;">📌 PS Everyday</h1>
+    <p style="color: #333; font-size: 16px; margin-top: 10px;">매일 알고리즘 문제를 추천받고 싶다면 이메일을 등록하세요!</p>
 
-    <form th:action="@{/subscribe}" method="post" class="mt-6">
-        <div class="flex flex-col">
-            <label for="email" class="text-left text-sm font-medium text-gray-700">이메일</label>
+    <form th:action="@{/subscribe}" method="post" style="margin-top: 20px;">
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label for="email" style="font-size: 14px; font-weight: bold; color: #333;">이메일</label>
             <input type="email" id="email" name="email" required
-                   class="mt-1 p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                   style="margin-top: 5px; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; outline: none; box-sizing: border-box;">
         </div>
         <button type="submit"
-                class="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+                style="margin-top: 10px; background: #007bff; color: #ffffff; font-weight: bold; font-size: 14px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; transition: background 0.3s;">
             ✅ 구독하기
         </button>
     </form>
 
-    <div th:if="${showVerificationForm}" class="mt-4">
-        <h3 class="text-lg font-semibold">인증 코드 입력</h3>
-        <form th:action="@{/verify}" method="post" class="mt-4">
+    <div th:if="${showVerificationForm}" style="margin-top: 20px;">
+        <h3 style="color: #007bff; font-size: 18px; font-weight: bold;">인증 코드 입력</h3>
+        <form th:action="@{/verify}" method="post" style="margin-top: 15px;">
             <input type="hidden" name="email" th:value="${email}">
-            <div class="flex flex-col">
-                <label for="verificationCode" class="text-left text-sm font-medium text-gray-700">인증 코드</label>
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label for="verificationCode" style="font-size: 14px; font-weight: bold; color: #333;">인증 코드</label>
                 <input type="text" id="verificationCode" name="verificationCode" required
-                       class="mt-1 p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                       style="margin-top: 5px; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; outline: none; box-sizing: border-box;">
             </div>
             <button type="submit"
-                    class="mt-4 bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                    style="margin-top: 10px; background: #28a745; color: #ffffff; font-weight: bold; font-size: 14px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; transition: background 0.3s;">
                 인증하기
             </button>
         </form>
     </div>
 
-    <div th:if="${message}" th:text="${message}" class="mt-4 text-green-600 font-semibold"></div>
+    <div th:if="${message}" th:text="${message}" style="margin-top: 20px; color: #28a745; font-size: 14px; font-weight: bold;"></div>
 </div>
 
 </body>

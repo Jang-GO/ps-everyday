@@ -3,8 +3,10 @@ package org.janggo.pseveryday.subscriber;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "subscriber")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

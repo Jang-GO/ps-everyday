@@ -41,9 +41,14 @@ public class SubscriberController {
         boolean isVerified = verificationService.verifyCode(email, verificationCode);
 
         if (isVerified) {
-            // 인증이 완료되면 사용자를 DB에 저장
-            Subscriber subscriber = new Subscriber(email);
-            subscriberRepository.save(subscriber);  // DB에 저장
+            // 이미 존재하는지 확인
+            if (!subscriberRepository.existsByEmail(email)) {
+                // 존재하지 않을 경우에만 저장
+                Subscriber subscriber = new Subscriber(email);
+                subscriberRepository.save(subscriber);  // DB에 저장
+            }
+
+            mailService.sendGreetingMail(email);
 
             model.addAttribute("message", "인증 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
             model.addAttribute("showVerificationForm", false); // 인증 성공하면 입력 폼 숨김

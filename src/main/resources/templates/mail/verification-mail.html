@@ -3,57 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>이메일 인증</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 60%;
-            margin: 30px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        h2 {
-            color: #007bff;
-            font-size: 24px;
-        }
-        p {
-            font-size: 16px;
-            color: #333;
-        }
-        .code-box {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #888;
-        }
-    </style>
 </head>
-<body>
-<div class="container">
-    <h2>📌 PS Everyday - 이메일 인증</h2>
-    <p>안녕하세요! <span th:text="${email}"></span>님,</p>
-    <p>아래 인증 코드를 입력하여 이메일 인증을 완료하세요:</p>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="width: 60%; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+    <h2 style="color: #007bff; font-size: 24px;">📌 PS Everyday - 이메일 인증</h2>
+    <p style="font-size: 16px; color: #333;">안녕하세요! <span th:text="${email}"></span>님,</p>
+    <p style="font-size: 16px; color: #333;">아래 인증 코드를 입력하여 이메일 인증을 완료하세요:</p>
 
-    <div class="code-box" th:text="${verificationCode}"></div>
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 20px; font-weight: bold; color: #007bff;" th:text="${verificationCode}"></div>
 
-    <p>이 인증 코드는 5분 후 만료됩니다.</p>
-    <div class="footer">
-        <p>📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
+    <p style="font-size: 16px; color: #333;">이 인증 코드는 5분 후 만료됩니다.</p>
+    <div style="margin-top: 20px; font-size: 14px; color: #888;">
+        <p style="font-size: 14px; color: #888;">📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
     </div>
 </div>
 </body>

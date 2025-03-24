@@ -17,6 +17,6 @@ public class SolvedAcResponse {
     public static class Problem {
         private int problemId;
         private String titleKo;
-        private int level;
+        private ProblemLevel level;
     }
 }
