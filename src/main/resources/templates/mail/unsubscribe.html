@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>구독 취소</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="width: 90%; max-width: 600px; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+    <h1 style="color: #007bff; font-size: 24px; margin-bottom: 20px;">PS Everyday 구독 취소</h1>
+
+    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 25px; text-align: left;">
+        <p style="font-size: 16px; color: #333; margin-bottom: 10px;">
+            <strong style="color: #007bff;">안내:</strong> 다음 이메일 주소의 구독을 취소합니다:
+        </p>
+        <p style="font-size: 18px; color: #28a745; font-weight: bold; padding: 10px; background-color: #e9f5e9; border-radius: 5px; text-align: center;" th:text="${email}">
+            example@email.com
+        </p>
+        <p style="font-size: 16px; color: #333; margin-top: 15px;">
+            구독을 취소하시면 더 이상 알고리즘 문제를 받아보실 수 없습니다.
+        </p>
+    </div>
+
+    <form action="/unsubscribe" method="post" style="max-width: 400px; margin: 0 auto;">
+        <!-- 이메일을 hidden 필드로 변경 -->
+        <input type="hidden" name="email" th:value="${email}">
+
+        <button type="submit"
+                style="display: inline-block;
+                       padding: 12px 30px;
+                       background-color: #dc3545;
+                       color: #ffffff;
+                       border: none;
+                       border-radius: 5px;
+                       font-size: 16px;
+                       font-weight: bold;
+                       cursor: pointer;
+                       transition: background-color 0.3s;">
+            구독 취소하기
+        </button>
+    </form>
+
+    <div style="margin-top: 25px;">
+        <a href="/"
+           style="display: inline-block;
+                  padding: 10px 20px;
+                  background-color: #6c757d;
+                  color: #ffffff;
+                  text-decoration: none;
+                  border-radius: 5px;
+                  font-size: 14px;
+                  transition: background-color 0.3s;">
+            홈으로 돌아가기
+        </a>
+    </div>
+</div>
+</body>
+</html>
