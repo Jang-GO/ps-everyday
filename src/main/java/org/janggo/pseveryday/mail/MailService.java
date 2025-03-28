@@ -3,6 +3,7 @@ package org.janggo.pseveryday.mail;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailService {
@@ -34,12 +36,13 @@ public class MailService {
             Context context = new Context();
             context.setVariable("email", email);
             context.setVariable("verificationCode", verificationCode);
+
             String htmlContent = templateEngine.process("mail/verification-mail", context);
 
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage());
         }
     }
