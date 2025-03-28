@@ -46,4 +46,26 @@ public class SubscriberController {
         model.addAttribute("email", email); // 이메일 정보를 유지하여 계속 폼에 사용
         return "home";
     }
+
+    // 구독 취소 페이지
+    @GetMapping("/unsubscribe")
+    public String unsubscribePage(@RequestParam("email") String email, Model model) {
+        model.addAttribute("email", email);
+        return "unsubscribe";
+    }
+
+    // 구독 취소 처리
+    @PostMapping("/unsubscribe")
+    public String unsubscribe(@RequestParam("email") String email, Model model) {
+        boolean unsubscribed = subscribeService.unsubscribe(email);
+
+        if (unsubscribed) {
+            model.addAttribute("message", "구독이 성공적으로 취소되었습니다.");
+        } else {
+            model.addAttribute("message", "구독 정보를 찾을 수 없습니다.");
+        }
+
+        return "unsubscribe-result";
+    }
+
 }

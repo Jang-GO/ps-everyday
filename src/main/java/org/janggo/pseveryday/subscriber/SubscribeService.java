@@ -36,6 +36,14 @@ public class SubscribeService {
         return isVerified;
     }
 
+    public boolean unsubscribe(String email){
+        if(subscriberRepository.existsByEmail(email)){
+            subscriberRepository.deleteByEmail(email);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 구독자 등록 (이미 존재하지 않을 경우에만)
      */
@@ -45,4 +53,5 @@ public class SubscribeService {
             subscriberRepository.save(subscriber);
         }
     }
+
 }
