@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.janggo.pseveryday.mail.MailService;
 import org.janggo.pseveryday.mail.VerificationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SubscribeService {
 
     private final VerificationService verificationService;

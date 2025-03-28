@@ -51,7 +51,7 @@ public class SubscriberController {
     @GetMapping("/unsubscribe")
     public String unsubscribePage(@RequestParam("email") String email, Model model) {
         model.addAttribute("email", email);
-        return "unsubscribe";
+        return "mail/unsubscribe";
     }
 
     // 구독 취소 처리
@@ -65,7 +65,7 @@ public class SubscriberController {
             model.addAttribute("message", "구독 정보를 찾을 수 없습니다.");
         }
 
-        return "unsubscribe-result";
+        return "mail/unsubscribe-result";
     }
 
 }
