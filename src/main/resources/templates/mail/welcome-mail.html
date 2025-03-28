@@ -12,7 +12,11 @@
     <p style="font-size: 16px; color: #333;">문제를 풀며 알고리즘 실력을 키워보세요. 최고의 하루 되세요! 😊</p>
     <div style="margin-top: 20px; font-size: 14px; color: #888;">
         <p style="font-size: 14px; color: #888;">📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+            <a th:href="@{'http://localhost:8080/unsubscribe?email=' + ${email}}" style="color: #888; text-decoration: underline;">구독 취소</a>
+        </p>
     </div>
+
 </div>
 </body>
 </html>
