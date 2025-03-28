@@ -1,8 +1,6 @@
 package org.janggo.pseveryday.subscriber;
 
 import lombok.RequiredArgsConstructor;
-import org.janggo.pseveryday.mail.MailService;
-import org.janggo.pseveryday.mail.VerificationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class SubscriberController {
 
-    private final VerificationService verificationService;
-    private final MailService mailService;
-    private final SubscriberRepository subscriberRepository;
+    private final SubscribeService subscribeService;
 
     // 화면 조회
     @GetMapping("/")
@@ -27,8 +23,7 @@ public class SubscriberController {
     // 이메일 등록 후 인증 코드 전송
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam("email") String email, Model model) {
-        String verificationCode = verificationService.generationVerificationCode(email);
-        mailService.sendVerifyMail(email, verificationCode);
+        subscribeService.sendVerificationCode(email);
 
         model.addAttribute("showVerificationForm", true);
         model.addAttribute("email", email);
@@ -38,18 +33,9 @@ public class SubscriberController {
     // 인증 코드 확인
     @PostMapping("/verify")
     public String verify(@RequestParam("email") String email, @RequestParam("verificationCode") String verificationCode, Model model) {
-        boolean isVerified = verificationService.verifyCode(email, verificationCode);
+        boolean isVerified = subscribeService.verifyAndSubscribe(email, verificationCode);
 
         if (isVerified) {
-            // 이미 존재하는지 확인
-            if (!subscriberRepository.existsByEmail(email)) {
-                // 존재하지 않을 경우에만 저장
-                Subscriber subscriber = new Subscriber(email);
-                subscriberRepository.save(subscriber);  // DB에 저장
-            }
-
-            mailService.sendGreetingMail(email);
-
             model.addAttribute("message", "인증 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
             model.addAttribute("showVerificationForm", false); // 인증 성공하면 입력 폼 숨김
         } else {
