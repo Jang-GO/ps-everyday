@@ -54,4 +54,12 @@ public class Subscriber {
             tags.forEach(this::addTagPreference);
         }
     }
+
+    public void updateTierPreference(TierPreference tierPreference) {
+        this.tierPreference = tierPreference;
+    }
+
+    public void clearTagPreferences() {
+        tagPreferences.clear();
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,15 +43,35 @@ public class SubscribeService {
     /**
      * 선호도 저장
      */
-    public void subscribe(String email, int minTier, int maxTier, List<String> tagNames) {
-        Subscriber subscriber = new Subscriber(email, new TierPreference(minTier, maxTier));
-        if (tagNames != null) {
-            List<Tag> tags = tagNames.stream()
-                    .map(tagRepository::findByDisplayName)
+    @Transactional
+    public void subscribe(String email, int minTier, int maxTier, List<Long> tagIds) {
+        Optional<Subscriber> existingSubscriber = subscriberRepository.findByEmail(email);
+        Subscriber subscriber;
+
+        if (existingSubscriber.isPresent()) {
+            // 기존 구독자 정보 업데이트
+            subscriber = existingSubscriber.get();
+            subscriber.updateTierPreference(new TierPreference(minTier, maxTier));
+            subscriber.clearTagPreferences(); // 기존 태그 제거
+        } else {
+            // 새 구독자 생성
+            subscriber = new Subscriber(email, new TierPreference(minTier, maxTier));
+        }
+
+        // 태그 추가
+        if (tagIds != null && !tagIds.isEmpty()) {
+            List<Tag> tags = tagIds.stream()
+                    .map(tagRepository::findById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
-            tags.forEach(subscriber::addTagPreference);
+
+            if (!tags.isEmpty()) {
+                tags.forEach(subscriber::addTagPreference);
+            }
         }
         subscriberRepository.save(subscriber);
+        mailService.sendGreetingMail(email);
     }
 
     public boolean unsubscribe(String email) {
