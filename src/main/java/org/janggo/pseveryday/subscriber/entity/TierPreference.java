@@ -26,5 +26,4 @@ public class TierPreference {
     public int getEffectiveMaxTier() {
         return maxTier != null ? maxTier : 30; // 기본값은 30 (루비1)
     }
-
 }

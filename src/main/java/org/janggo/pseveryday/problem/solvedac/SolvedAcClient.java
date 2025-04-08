@@ -1,4 +1,4 @@
-package org.janggo.pseveryday.problem;
+package org.janggo.pseveryday.problem.solvedac;
 
 import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,4 +14,8 @@ public interface SolvedAcClient {
             @RequestParam("sort") String sort,
             @RequestParam("direction") String direction,
             @RequestParam("page") Integer page);
+
+    // query=tier:11. => 11레벨 문제 가져오기
+    // query=tier:11..15 => 11에서 15레벨 사이의 문제 가져오기
+    // query=tier:11..15 tag:dp=> 11에서 15레벨 사이의 dp카테고리가 붙은 문제 가져오기
 }

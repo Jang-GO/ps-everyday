@@ -1,7 +1,7 @@
 package org.janggo.pseveryday.mail;
 
 import lombok.extern.slf4j.Slf4j;
-import org.janggo.pseveryday.problem.SolvedAcService;
+import org.janggo.pseveryday.problem.solvedac.SolvedAcService;
 import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

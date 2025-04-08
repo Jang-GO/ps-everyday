@@ -34,7 +34,6 @@ public class Subscriber {
         this.subscribedAt = LocalDateTime.now();
     }
 
-
     public List<String> getTagPreferenceNames() {
         return tagPreferences.stream()
                 .map(TagPreference::getTagName)

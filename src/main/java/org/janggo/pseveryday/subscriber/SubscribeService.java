@@ -3,8 +3,12 @@ package org.janggo.pseveryday.subscriber;
 import lombok.RequiredArgsConstructor;
 import org.janggo.pseveryday.mail.MailService;
 import org.janggo.pseveryday.mail.VerificationService;
+import org.janggo.pseveryday.subscriber.entity.Subscriber;
+import org.janggo.pseveryday.subscriber.entity.TierPreference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,35 +29,28 @@ public class SubscribeService {
     }
 
     /**
-     * 인증 코드 확인 및 구독자 등록
+     * 인증 코드 확인
      */
-    public boolean verifyAndSubscribe(String email, String verificationCode) {
-        boolean isVerified = verificationService.verifyCode(email, verificationCode);
-
-        if (isVerified) {
-            registerSubscriber(email);
-            mailService.sendGreetingMail(email);
-        }
-
-        return isVerified;
+    public boolean verifyCode(String email, String verificationCode) {
+        return verificationService.verifyCode(email, verificationCode);
     }
 
-    public boolean unsubscribe(String email){
-        if(subscriberRepository.existsByEmail(email)){
+    /**
+     * 선호도 저장
+     */
+    public void subscribe(String email, int minTier, int maxTier, List<String> tags) {
+        Subscriber subscriber = new Subscriber(email, new TierPreference(minTier, maxTier));
+        if (tags != null) {
+            tags.forEach(subscriber::addTagPreference);
+        }
+        subscriberRepository.save(subscriber);
+    }
+
+    public boolean unsubscribe(String email) {
+        if (subscriberRepository.existsByEmail(email)) {
             subscriberRepository.deleteByEmail(email);
             return true;
         }
         return false;
     }
-
-    /**
-     * 구독자 등록 (이미 존재하지 않을 경우에만)
-     */
-    private void registerSubscriber(String email) {
-        if (!subscriberRepository.existsByEmail(email)) {
-            Subscriber subscriber = new Subscriber(email);
-            subscriberRepository.save(subscriber);
-        }
-    }
-
 }

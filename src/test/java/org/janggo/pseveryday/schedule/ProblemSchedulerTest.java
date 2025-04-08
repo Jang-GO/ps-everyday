@@ -1,10 +1,10 @@
 package org.janggo.pseveryday.schedule;
 
 import org.janggo.pseveryday.mail.MailService;
-import org.janggo.pseveryday.problem.SolvedAcService;
+import org.janggo.pseveryday.problem.solvedac.SolvedAcService;
 import org.janggo.pseveryday.problem.dto.ProblemLevel;
 import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
-import org.janggo.pseveryday.subscriber.Subscriber;
+import org.janggo.pseveryday.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.subscriber.SubscriberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProblemSchedulerTest {
