@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.janggo.pseveryday.problem.entity.Tag;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,22 +37,21 @@ public class Subscriber {
 
     public List<String> getTagPreferenceNames() {
         return tagPreferences.stream()
-                .map(TagPreference::getTagName)
+                .map(tp -> tp.getTag().getDisplayName())  // Tag 엔티티의 displayName 사용
                 .collect(Collectors.toList());
     }
 
-    public void addTagPreference(String tagName) {
+    public void addTagPreference(Tag tag) {  // Tag 엔티티를 직접 받도록 수정
         TagPreference tagPreference = new TagPreference();
         tagPreference.setSubscriber(this);
-        tagPreference.setTagName(tagName);
+        tagPreference.setTag(tag);
         tagPreferences.add(tagPreference);
     }
 
-    public void setTagPreferences(List<String> tagNames) {
+    public void setTagPreferences(List<Tag> tags) {  // Tag 엔티티 리스트를 받도록 수정
         tagPreferences.clear();
-
-        if (tagNames != null) {
-            tagNames.forEach(this::addTagPreference);
+        if (tags != null) {
+            tags.forEach(this::addTagPreference);
         }
     }
 }
