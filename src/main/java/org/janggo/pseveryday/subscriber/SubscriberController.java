@@ -2,33 +2,32 @@ package org.janggo.pseveryday.subscriber;
 
 import lombok.RequiredArgsConstructor;
 import org.janggo.pseveryday.problem.dto.ProblemLevel;
+import org.janggo.pseveryday.problem.entity.Tag;
+import org.janggo.pseveryday.problem.repository.TagRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class SubscriberController {
 
     private final SubscribeService subscribeService;
+    private final TagRepository tagRepository;
 
-    // 화면 조회
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("showVerificationForm", false);
         model.addAttribute("showPreferenceForm", false);
         model.addAttribute("problemLevels", ProblemLevel.values());
-        model.addAttribute("availableTags", Arrays.asList("DP", "그리디", "구현", "브루트포스", "정렬", "이분탐색", "BFS", "DFS", "다익스트라", "플로이드워셜"));
+        model.addAttribute("availableTags", tagRepository.findAll());
         return "home";
     }
 
-    // 이메일 등록 후 인증 코드 전송
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam("email") String email, Model model) {
         subscribeService.sendVerificationCode(email);
@@ -37,11 +36,10 @@ public class SubscriberController {
         model.addAttribute("showPreferenceForm", false);
         model.addAttribute("email", email);
         model.addAttribute("problemLevels", ProblemLevel.values());
-        model.addAttribute("availableTags", Arrays.asList("DP", "그리디", "구현", "브루트포스", "정렬", "이분탐색", "BFS", "DFS", "다익스트라", "플로이드워셜"));
+        model.addAttribute("availableTags", tagRepository.findAll());
         return "home";
     }
 
-    // 인증 코드 확인
     @PostMapping("/verify")
     public String verify(@RequestParam("email") String email,
                          @RequestParam("verificationCode") String verificationCode,
@@ -60,19 +58,17 @@ public class SubscriberController {
 
         model.addAttribute("email", email);
         model.addAttribute("problemLevels", ProblemLevel.values());
-        model.addAttribute("availableTags", Arrays.asList("DP", "그리디", "구현", "브루트포스", "정렬", "이분탐색", "BFS", "DFS", "다익스트라", "플로이드워셜"));
+        model.addAttribute("availableTags", tagRepository.findAll());
         return "home";
     }
 
-    // 선호도 저장
     @PostMapping("/save-preferences")
     public String savePreferences(@RequestParam("email") String email,
                                   @RequestParam(value = "minTier", required = false) Integer minTier,
                                   @RequestParam(value = "maxTier", required = false) Integer maxTier,
-                                  @RequestParam(value = "tags", required = false) List<String> tags,
+                                  @RequestParam(value = "tags", required = false) List<String> tagNames,
                                   Model model) {
-        // minTier와 maxTier가 null이면 모든 레벨을 수신한다는 의미
-        subscribeService.subscribe(email, minTier, maxTier, tags);
+        subscribeService.subscribe(email, minTier != null ? minTier : 0, maxTier != null ? maxTier : 30, tagNames);
 
         model.addAttribute("message", "구독이 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
         model.addAttribute("showVerificationForm", false);
@@ -80,14 +76,12 @@ public class SubscriberController {
         return "home";
     }
 
-    // 구독 취소 페이지
     @GetMapping("/unsubscribe")
     public String unsubscribePage(@RequestParam("email") String email, Model model) {
         model.addAttribute("email", email);
         return "mail/unsubscribe";
     }
 
-    // 구독 취소 처리
     @PostMapping("/unsubscribe")
     public String unsubscribe(@RequestParam("email") String email, Model model) {
         boolean unsubscribed = subscribeService.unsubscribe(email);
@@ -98,6 +92,8 @@ public class SubscriberController {
             model.addAttribute("message", "구독 정보를 찾을 수 없습니다.");
         }
 
-        return "mail/unsubscribe-result";
+        model.addAttribute("showVerificationForm", false);
+        model.addAttribute("showPreferenceForm", false);
+        return "home";
     }
 }
