@@ -44,7 +44,10 @@ public class SubscribeService {
      * 선호도 저장
      */
     @Transactional
-    public void subscribe(String email, int minTier, int maxTier, List<Long> tagIds) {
+    public void subscribe(String email, Integer minTier, Integer maxTier, List<Long> tagIds) {
+        if (minTier == null) minTier = 1;
+        if (maxTier == null) maxTier = 30;
+
         Optional<Subscriber> existingSubscriber = subscriberRepository.findByEmail(email);
         Subscriber subscriber;
 

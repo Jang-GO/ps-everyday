@@ -69,7 +69,7 @@ public class SubscriberController {
                                   @RequestParam(value = "tags", required = false) List<Long> tagIds,
                                   RedirectAttributes redirectAttributes) {
         try {
-            subscribeService.subscribe(email, minTier != null ? minTier : 0, maxTier != null ? maxTier : 30, tagIds);
+            subscribeService.subscribe(email, minTier , maxTier , tagIds);
             redirectAttributes.addFlashAttribute("message", "구독이 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "구독 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
