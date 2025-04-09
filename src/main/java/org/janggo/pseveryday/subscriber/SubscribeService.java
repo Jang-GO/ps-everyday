@@ -60,11 +60,7 @@ public class SubscribeService {
 
         // 태그 추가
         if (tagIds != null && !tagIds.isEmpty()) {
-            List<Tag> tags = tagIds.stream()
-                    .map(tagRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+            List<Tag> tags = tagRepository.findAllById(tagIds);
 
             if (!tags.isEmpty()) {
                 tags.forEach(subscriber::addTagPreference);
