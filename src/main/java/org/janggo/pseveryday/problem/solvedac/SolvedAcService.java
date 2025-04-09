@@ -1,4 +1,4 @@
-package org.janggo.pseveryday.problem;
+package org.janggo.pseveryday.problem.solvedac;
 
 import lombok.RequiredArgsConstructor;
 import org.janggo.pseveryday.problem.dto.SolvedAcProperties;
