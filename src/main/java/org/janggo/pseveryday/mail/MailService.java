@@ -32,7 +32,7 @@ public class MailService {
         sendMail("📌 PS Everyday - 이메일 인증 코드", email, "mail/verification-mail", variables);
     }
 
-    public void sendProblemMail(String email, SolvedAcResponse.Problem problem) {
+    public void sendProblemMail(String email, SolvedAcResponse.ProblemItem problem) {
         Map<String, Object> variables = Map.of(
                 "email", email,
                 "problem", problem,

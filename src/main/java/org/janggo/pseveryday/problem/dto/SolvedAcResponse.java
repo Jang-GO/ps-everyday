@@ -1,22 +1,27 @@
 package org.janggo.pseveryday.problem.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class SolvedAcResponse {
-    private List<Problem> items;
+    private List<ProblemItem> items;
 
     @Getter
     @Setter
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Problem {
-        private int problemId;
+    public static class ProblemItem {
+        private Long problemId;
         private String titleKo;
-        private ProblemLevel level;
+        private Integer level;
+        private List<TagItem> tags;
+
+        @Getter
+        @Setter
+        public static class TagItem {
+            private String displayNames;
+        }
     }
 }
