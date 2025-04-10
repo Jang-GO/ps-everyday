@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ps-everyday
+  profiles:
+    active: test
+  datasource:
+    url: jdbc:mysql://${ps.db.endpoint}/${ps.db.dbname}?useSSL=false&serverTimezone=Asia/Seoul
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
