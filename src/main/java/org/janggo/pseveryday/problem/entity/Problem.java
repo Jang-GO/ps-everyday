@@ -1,37 +1,41 @@
 package org.janggo.pseveryday.problem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // Problem 엔티티
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Problem {
     @Id
-    private int problemId;
+    @Column(name = "problem_id")
+    private Long problemId;
 
     private String titleKo;
 
-    private int level;
+    private Integer level;
 
     private LocalDateTime createdAt;
 
-    // 필요하다면 태그 정보 등 추가 필드
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProblemTag> problemTags = new ArrayList<>();
 
-    public static Problem fromSolvedAcProblem(SolvedAcResponse.Problem problem) {
-        Problem entity = new Problem();
-        entity.setProblemId(problem.getProblemId());
-        entity.setTitleKo(problem.getTitleKo());
-        entity.setLevel(problem.getLevel().getLevel());
-        entity.setCreatedAt(LocalDateTime.now());
-        return entity;
+    public Problem(Long problemId, String titleKo, Integer level) {
+        this.problemId = problemId;
+        this.titleKo = titleKo;
+        this.level = level;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void addTag(Tag tag) {
+        ProblemTag problemTag = new ProblemTag(this, tag);
+        this.problemTags.add(problemTag);
     }
 }
