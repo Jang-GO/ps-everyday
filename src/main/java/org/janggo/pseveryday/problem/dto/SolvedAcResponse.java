@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 public class SolvedAcResponse {
     private List<ProblemItem> items;
+    private Integer count;  // 총 문제 수
 
     @Getter
     @Setter
@@ -21,7 +22,16 @@ public class SolvedAcResponse {
         @Getter
         @Setter
         public static class TagItem {
-            private String displayNames;
+            private String key;
+            private List<DisplayName> displayNames;
+
+            @Getter
+            @Setter
+            public static class DisplayName {
+                private String language;
+                private String name;
+                private String shortName;
+            }
         }
     }
 }

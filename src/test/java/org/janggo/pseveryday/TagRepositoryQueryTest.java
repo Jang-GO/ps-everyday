@@ -28,9 +28,9 @@ public class TagRepositoryQueryTest {
 
     @BeforeEach
     void setUp() {
-        Tag tag1 = tagRepository.save(new Tag("test_tag1"));
-        Tag tag2 = tagRepository.save(new Tag("test_tag2"));
-        Tag tag3 = tagRepository.save(new Tag("test_tag3"));
+        Tag tag1 = tagRepository.save(new Tag("test_tag1", "test_tag1"));
+        Tag tag2 = tagRepository.save(new Tag("test_tag2","test_tag2"));
+        Tag tag3 = tagRepository.save(new Tag("test_tag3","test_tag3"));
 
         // 영속성 컨텍스트에서 가져와 select 쿼리르 비교하지 못하기 때문에 추가
         em.flush();

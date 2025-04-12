@@ -18,11 +18,13 @@ public class Tag {
     private Long id;
 
     String displayName;
+    private String key;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProblemTag> problemTags = new ArrayList<>();
 
-    public Tag(String displayName) {
+    public Tag(String displayName, String key) {
         this.displayName = displayName;
+        this.key = key;
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SolvedAcController {
     private final SolvedAcService solvedAcService;
     @GetMapping("/random")
-    public ResponseEntity<SolvedAcResponse.Problem> getRandomProblem() {
+    public ResponseEntity<SolvedAcResponse.ProblemItem> getRandomProblem() {
         return ResponseEntity.ok(solvedAcService.getRandomProblem());
     }
 }

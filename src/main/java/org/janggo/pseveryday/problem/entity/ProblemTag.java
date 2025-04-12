@@ -14,7 +14,7 @@ public class ProblemTag {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "problem_id", referencedColumnName = "problemId")
+    @JoinColumn(name = "problem_id")
     private Problem problem;
 
     @ManyToOne(fetch = FetchType.LAZY)

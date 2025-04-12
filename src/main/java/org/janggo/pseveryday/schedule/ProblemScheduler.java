@@ -27,7 +27,7 @@ public class ProblemScheduler {
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
 
-        SolvedAcResponse.Problem randomProblem = solvedAcService.getRandomProblem();
+        SolvedAcResponse.ProblemItem randomProblem = solvedAcService.getRandomProblem();
 
         for(Subscriber subscriber: subscribers){
             log.info("구독지 : {}", subscriber.getEmail());

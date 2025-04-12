@@ -15,11 +15,11 @@ public class SolvedAcService {
     private final SolvedAcClient solvedAcClient;
     private static final String RANDOM_QUERY = " ";
 
-    public SolvedAcResponse.Problem getRandomProblem(){
+    public SolvedAcResponse.ProblemItem getRandomProblem(){
         Random random = new Random();
         int randomPage = random.nextInt(properties.getStart(), properties.getEnd()+1);
         SolvedAcResponse response = solvedAcClient.searchProblem(RANDOM_QUERY, "id", "asc", randomPage);
-        List<SolvedAcResponse.Problem> problems = response.getItems();
+        List<SolvedAcResponse.ProblemItem> problems = response.getItems();
 
         if (problems == null || problems.isEmpty()) {
             throw new RuntimeException("검색된 문제가 없습니다.");
