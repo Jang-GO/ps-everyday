@@ -12,9 +12,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
   mail:
     host: smtp.naver.com
@@ -28,6 +25,7 @@ spring:
           ssl:
             enable: true
             trust: smtp.naver.com
+
 
 boj:
   page:
