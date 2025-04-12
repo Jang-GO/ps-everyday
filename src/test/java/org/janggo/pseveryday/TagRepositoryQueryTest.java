@@ -2,8 +2,8 @@ package org.janggo.pseveryday;
 
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.janggo.pseveryday.problem.entity.Tag;
-import org.janggo.pseveryday.problem.repository.TagRepository;
+import org.janggo.pseveryday.domain.problem.entity.Tag;
+import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

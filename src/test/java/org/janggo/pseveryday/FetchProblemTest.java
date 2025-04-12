@@ -1,12 +1,12 @@
 package org.janggo.pseveryday;
 
 import lombok.extern.slf4j.Slf4j;
-import org.janggo.pseveryday.problem.dto.SolvedAcResponse;
-import org.janggo.pseveryday.problem.entity.Problem;
-import org.janggo.pseveryday.problem.entity.Tag;
-import org.janggo.pseveryday.problem.repository.ProblemRepository;
-import org.janggo.pseveryday.problem.repository.TagRepository;
-import org.janggo.pseveryday.problem.solvedac.SolvedAcClient;
+import org.janggo.pseveryday.domain.problem.dto.SolvedAcResponse;
+import org.janggo.pseveryday.domain.problem.entity.Problem;
+import org.janggo.pseveryday.domain.problem.entity.Tag;
+import org.janggo.pseveryday.domain.problem.repository.ProblemRepository;
+import org.janggo.pseveryday.domain.problem.repository.TagRepository;
+import org.janggo.pseveryday.external.solvedac.client.SolvedAcClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
