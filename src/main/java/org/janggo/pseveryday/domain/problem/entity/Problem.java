@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.janggo.pseveryday.domain.problem.dto.ProblemLevel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,5 +38,9 @@ public class Problem {
     public void addTag(Tag tag) {
         ProblemTag problemTag = new ProblemTag(this, tag);
         this.problemTags.add(problemTag);
+    }
+
+    public ProblemLevel getProblemLevel(){
+        return ProblemLevel.fromLevel(this.level);
     }
 }

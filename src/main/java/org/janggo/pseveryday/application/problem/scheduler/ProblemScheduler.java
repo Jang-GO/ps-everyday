@@ -25,11 +25,12 @@ public class ProblemScheduler {
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
 
-    @Scheduled(cron = "* * 8 * * *") // 매일 오전 8시 실행
+    @Scheduled(cron = "*/5 * * * * *") // 매일 오전 8시 실행
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
 
         for(Subscriber subscriber: subscribers){
+            log.info("min, max = {}, {}", subscriber.getTierPreference().getMinTier(), subscriber.getTierPreference().getMaxTier());
             // 구독자의 선호 난이도 범위에 맞는 문제들 조회
             List<Problem> problems = problemRepository.findByLevelBetweenWithTags(
                     subscriber.getTierPreference().getMinTier(),
