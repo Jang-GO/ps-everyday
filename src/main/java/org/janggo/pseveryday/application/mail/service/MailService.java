@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.janggo.pseveryday.domain.problem.dto.SolvedAcResponse;
+import org.janggo.pseveryday.domain.problem.entity.Problem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -32,7 +33,7 @@ public class MailService {
         sendMail("📌 PS Everyday - 이메일 인증 코드", email, "mail/verification-mail", variables);
     }
 
-    public void sendProblemMail(String email, SolvedAcResponse.ProblemItem problem) {
+    public void sendProblemMail(String email, Problem problem) {
         Map<String, Object> variables = Map.of(
                 "email", email,
                 "problem", problem,
