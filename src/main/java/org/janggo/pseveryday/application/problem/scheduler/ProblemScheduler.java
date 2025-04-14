@@ -12,6 +12,7 @@ import org.janggo.pseveryday.domain.subscriber.repository.SubscriberRepository;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -27,6 +28,7 @@ public class ProblemScheduler {
     private final SubscriberRepository subscriberRepository;
 
     @Scheduled(cron = "*/5 * * * * *")
+    @Transactional(readOnly = true)
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
 
