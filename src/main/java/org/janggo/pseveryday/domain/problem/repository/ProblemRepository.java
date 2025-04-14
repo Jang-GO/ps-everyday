@@ -11,8 +11,14 @@ import java.util.List;
 // Problem 저장소
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
-    List<Problem> findByLevelBetween(int minLevel, int maxLevel);
-
-    @Query("SELECT p FROM Problem p JOIN FETCH p.problemTags pt JOIN FETCH pt.tag WHERE p.level BETWEEN :minLevel AND :maxLevel")
-    List<Problem> findByLevelBetweenWithTags(@Param("minLevel") int minLevel, @Param("maxLevel") int maxLevel);
+    @Query("SELECT DISTINCT p FROM Problem p " +
+            "JOIN FETCH p.problemTags pt " +
+            "JOIN FETCH pt.tag t " +
+            "WHERE p.level BETWEEN :minLevel AND :maxLevel " +
+            "AND t.id IN (SELECT tp.tag.id FROM TagPreference tp " +
+            "            WHERE tp.subscriber.id = :subscriberId)")
+    List<Problem> findProblemsBySubscriberPreferences(
+            @Param("minLevel") int minLevel,
+            @Param("maxLevel") int maxLevel,
+            @Param("subscriberId") Long subscriberId);
 }

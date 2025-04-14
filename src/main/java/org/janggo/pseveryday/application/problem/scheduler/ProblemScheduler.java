@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -32,9 +33,10 @@ public class ProblemScheduler {
         for(Subscriber subscriber: subscribers){
             log.info("min, max = {}, {}", subscriber.getTierPreference().getMinTier(), subscriber.getTierPreference().getMaxTier());
             // 구독자의 선호 난이도 범위에 맞는 문제들 조회
-            List<Problem> problems = problemRepository.findByLevelBetweenWithTags(
+            List<Problem> problems = problemRepository.findProblemsBySubscriberPreferences(
                     subscriber.getTierPreference().getMinTier(),
-                    subscriber.getTierPreference().getMaxTier()
+                    subscriber.getTierPreference().getMaxTier(),
+                    subscriber.getId()
             );
 
             if (problems.isEmpty()) {
@@ -45,7 +47,15 @@ public class ProblemScheduler {
             // 랜덤으로 문제 선택
             Problem randomProblem = problems.get(new Random().nextInt(problems.size()));
 
-            log.info("구독자 {}에게 문제 추천: {} (Level : {})", subscriber.getEmail(), randomProblem.getTitleKo(), randomProblem.getLevel());
+            log.info("구독자 {}에게 문제 추천: {} (Level: {}, Tags: {})",
+                    subscriber.getEmail(),
+                    randomProblem.getTitleKo(),
+                    randomProblem.getLevel(),
+                    randomProblem.getProblemTags().stream()
+                            .map(pt -> pt.getTag().getDisplayName())
+                            .collect(Collectors.joining(", "))
+            );
+
             mailService.sendProblemMail(subscriber.getEmail(), randomProblem);
         }
     }
