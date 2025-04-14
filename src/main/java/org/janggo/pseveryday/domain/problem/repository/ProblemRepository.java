@@ -21,4 +21,13 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
             @Param("minLevel") int minLevel,
             @Param("maxLevel") int maxLevel,
             @Param("subscriberId") Long subscriberId);
+
+    @Query("SELECT DISTINCT p FROM Problem p " +
+            "JOIN FETCH p.problemTags pt " +
+            "JOIN FETCH pt.tag t " +
+            "WHERE t.id IN (SELECT tp.tag.id FROM TagPreference tp " +
+            "              WHERE tp.subscriber.id = :subscriberId)")
+    List<Problem> findByTagPreferences(@Param("subscriberId") Long subscriberId);
+
+    List<Problem> findByLevelBetween(int minLevel, int maxLevel);
 }
