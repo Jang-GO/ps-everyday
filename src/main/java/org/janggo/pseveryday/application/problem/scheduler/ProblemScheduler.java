@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.janggo.pseveryday.application.mail.service.MailService;
 import org.janggo.pseveryday.domain.problem.entity.Problem;
 import org.janggo.pseveryday.domain.problem.repository.ProblemRepository;
-import org.janggo.pseveryday.external.solvedac.service.SolvedAcService;
-import org.janggo.pseveryday.domain.problem.dto.SolvedAcResponse;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.domain.subscriber.repository.SubscriberRepository;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,7 +25,7 @@ public class ProblemScheduler {
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
     @Transactional(readOnly = true)
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
@@ -38,27 +36,8 @@ public class ProblemScheduler {
             // 선호 티어와 태그 정보 확인
             boolean hasTierPreference = subscriber.getTierPreference() != null;
             boolean hasTagPreference = !subscriber.getTagPreferences().isEmpty();
-
-            if (hasTierPreference && hasTagPreference) {
-                // 선호 티어와 태그 모두 있는 경우
-                problems = problemRepository.findProblemsBySubscriberPreferences(
-                        subscriber.getTierPreference().getMinTier(),
-                        subscriber.getTierPreference().getMaxTier(),
-                        subscriber.getId()
-                );
-            } else if (hasTierPreference) {
-                // 선호 티어만 있는 경우
-                problems = problemRepository.findByLevelBetween(
-                        subscriber.getTierPreference().getMinTier(),
-                        subscriber.getTierPreference().getMaxTier()
-                );
-            } else if (hasTagPreference) {
-                // 선호 태그만 있는 경우
-                problems = problemRepository.findByTagPreferences(subscriber.getId());
-            } else {
-                // 둘 다 없는 경우
-                problems = problemRepository.findAll();
-            }
+            log.info("{}의 선호 태그 : {}", subscriber.getEmail(), subscriber.getTagPreferenceNames());
+            problems = filterProblems(subscriber, hasTierPreference, hasTagPreference);
 
             if (problems.isEmpty()) {
                 log.warn("구독자 {}에게 추천할 문제가 없습니다.", subscriber.getEmail());
@@ -78,5 +57,30 @@ public class ProblemScheduler {
 
             mailService.sendProblemMail(subscriber.getEmail(), randomProblem);
         }
+    }
+
+    private List<Problem> filterProblems(Subscriber subscriber, boolean hasTierPreference, boolean hasTagPreference) {
+        List<Problem> problems;
+        if (hasTierPreference && hasTagPreference) {
+            // 선호 티어와 태그 모두 있는 경우
+            problems = problemRepository.findProblemsBySubscriberPreferences(
+                    subscriber.getTierPreference().getMinTier(),
+                    subscriber.getTierPreference().getMaxTier(),
+                    subscriber.getId()
+            );
+        } else if (hasTierPreference) {
+            // 선호 티어만 있는 경우
+            problems = problemRepository.findByLevelBetween(
+                    subscriber.getTierPreference().getMinTier(),
+                    subscriber.getTierPreference().getMaxTier()
+            );
+        } else if (hasTagPreference) {
+            // 선호 태그만 있는 경우
+            problems = problemRepository.findByTagPreferences(subscriber.getId());
+        } else {
+            // 둘 다 없는 경우
+            problems = problemRepository.findAll();
+        }
+        return problems;
     }
 }
