@@ -8,13 +8,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.Mockito.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 
 @Slf4j
 @SpringBootTest
@@ -45,6 +45,8 @@ class ProblemSchedulerTest {
 
         log.info("{}명 - 실행 시간: {}ms", subscriberCount, (end - start));
     }
+
+
 
 //    @TestConfiguration
 //    static class MockMailServiceConfig {

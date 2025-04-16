@@ -12,8 +12,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,7 +38,9 @@ public class ProblemScheduler {
             // 선호 티어와 태그 정보 확인
             boolean hasTierPreference = subscriber.getTierPreference() != null;
             boolean hasTagPreference = !subscriber.getTagPreferences().isEmpty();
+
             log.info("{}의 선호 태그 : {}", subscriber.getEmail(), subscriber.getTagPreferenceNames());
+
             problems = filterProblems(subscriber, hasTierPreference, hasTagPreference);
 
             if (problems.isEmpty()) {
