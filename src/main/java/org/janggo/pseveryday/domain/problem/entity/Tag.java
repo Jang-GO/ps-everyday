@@ -18,6 +18,8 @@ public class Tag {
     private Long id;
 
     String displayName;
+
+    @Column(name = "tag_key")
     private String key;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)

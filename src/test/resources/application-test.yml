@@ -1,8 +1,6 @@
 spring:
   application:
     name: ps-everyday
-  profiles:
-    active: local
   datasource:
     url: jdbc:mysql://${ps.db.endpoint}/${ps.db.dbname}?useSSL=false&serverTimezone=Asia/Seoul
     username: ${MYSQL_USERNAME}
@@ -14,17 +12,18 @@ spring:
     show-sql: true
 
   mail:
-    host: smtp.naver.com
-    port: 465
-    username: ${mail-username}
-    password: ${mail-password}
+    host: localhost
+    port: 8025
+    username:
+    password:
     properties:
       mail:
         smtp:
-          auth: true
+          auth: false
           ssl:
-            enable: true
-            trust: smtp.naver.com
+            enable: false
+          starttls:
+            enable: false
 
 
 boj:

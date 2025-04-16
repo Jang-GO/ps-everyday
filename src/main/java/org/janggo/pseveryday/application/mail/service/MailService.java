@@ -4,15 +4,17 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.janggo.pseveryday.domain.problem.dto.SolvedAcResponse;
+import org.janggo.pseveryday.domain.problem.entity.Problem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -32,7 +34,8 @@ public class MailService {
         sendMail("📌 PS Everyday - 이메일 인증 코드", email, "mail/verification-mail", variables);
     }
 
-    public void sendProblemMail(String email, SolvedAcResponse.ProblemItem problem) {
+    @Async
+    public void sendProblemMail(String email, Problem problem) {
         Map<String, Object> variables = Map.of(
                 "email", email,
                 "problem", problem,
@@ -40,6 +43,7 @@ public class MailService {
         );
         sendMail("🎯 오늘의 알고리즘 문제", email, "mail/problem-mail", variables);
     }
+
 
     public void sendGreetingMail(String email) {
         Map<String, Object> variables = Map.of("email", email);

@@ -27,10 +27,9 @@ public class SubscribeService {
     /**
      * 이메일 등록 및 인증 코드 전송
      */
-    public String sendVerificationCode(String email) {
+    public void sendVerificationCode(String email) {
         String verificationCode = verificationService.generationVerificationCode(email);
         mailService.sendVerifyMail(email, verificationCode);
-        return verificationCode;
     }
 
     /**
