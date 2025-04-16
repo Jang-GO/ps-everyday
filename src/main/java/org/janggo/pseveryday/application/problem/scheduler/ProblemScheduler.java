@@ -27,7 +27,7 @@ public class ProblemScheduler {
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
 
-    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
     @Transactional(readOnly = true)
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();

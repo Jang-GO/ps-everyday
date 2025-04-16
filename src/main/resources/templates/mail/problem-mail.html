@@ -13,7 +13,7 @@
     <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #007bff; font-size: 20px;" th:text="${problem.titleKo}"></h3>
         <p style="font-size: 16px; color: #333;">
-            <b>난이도: <span th:style="'color:' + ${problem.problemLevel.getColor(problem.level)}" th:text="${problem.problemLevel.getDisplayName()}"></span> </b>
+            <b>난이도: <span th:style="'color:' + ${problem.problemLevel.color}" th:text="${problem.problemLevel.displayName}"></span> </b>
         </p>
         <a th:href="${link}" style="display: inline-block; margin-top: 10px; padding: 10px 20px; color: #ffffff; background: #007bff; text-decoration: none; border-radius: 5px; font-weight: bold;">
             🔗 문제 풀러 가기
