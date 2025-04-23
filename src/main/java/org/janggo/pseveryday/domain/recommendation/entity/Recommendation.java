@@ -19,9 +19,11 @@ public class Recommendation {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="subscriber_id")
     private Subscriber subscriber;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "problem_id")
     private Problem problem;
 
     private LocalDateTime recommendedAt;
