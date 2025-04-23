@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.janggo.pseveryday.domain.problem.entity.Tag;
+import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class Subscriber {
 
     @OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TagPreference> tagPreferences = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recommendation> recommendations = new ArrayList<>();
 
     public Subscriber(String email, TierPreference tierPreference) {
         this.email = email;
