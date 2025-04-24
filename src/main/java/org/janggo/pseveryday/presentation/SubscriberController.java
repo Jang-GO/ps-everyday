@@ -9,9 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,26 +45,22 @@ public class SubscriberController {
     }
 
     @PostMapping("/verify")
-    public String verify(@RequestParam("email") String email,
-                         @RequestParam("verificationCode") String verificationCode,
-                         Model model) {
+    @ResponseBody
+    public Map<String, Object> verify(
+            @RequestParam("email") String email,
+            @RequestParam("verificationCode") String verificationCode) {
+
         boolean isVerified = subscribeService.verifyCode(email, verificationCode);
 
-        if (isVerified) {
-            model.addAttribute("message", "인증이 완료되었습니다! 선호하는 태그와 티어를 선택해주세요.");
-            model.addAttribute("showVerificationForm", false);
-            model.addAttribute("showPreferenceForm", true);
-        } else {
-            model.addAttribute("message", "인증 코드가 잘못되었습니다. 다시 시도해 주세요.");
-            model.addAttribute("showVerificationForm", true);
-            model.addAttribute("showPreferenceForm", false);
-        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", isVerified);
+        response.put("message", isVerified ?
+                "인증이 완료되었습니다! 선호하는 태그와 티어를 선택해주세요." :
+                "인증 코드가 잘못되었습니다. 다시 시도해 주세요.");
 
-        model.addAttribute("email", email);
-        model.addAttribute("problemLevels", ProblemLevel.values());
-        model.addAttribute("availableTags", tagRepository.findAll());
-        return "home";
+        return response;
     }
+
 
     @PostMapping("/save-preferences")
     public String savePreferences(@RequestParam("email") String email,

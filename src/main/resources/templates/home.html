@@ -2,107 +2,826 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PS Everyday - 매일 알고리즘 문제 추천</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f7f7fc;
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background-color: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--gray);
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 12px;
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-title,
+        .step.completed .step-title {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--light-gray);
+            z-index: 0;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .range-slider {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            margin-top: 20px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--light-gray);
+            border-radius: 3px;
+            outline: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+            position: relative;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .slider-value {
+            position: absolute;
+            top: -30px;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .slider-value:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--primary);
+        }
+
+        .slider:hover + .slider-value, .slider:active + .slider-value {
+            opacity: 1;
+        }
+
+        .range-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .range-value {
+            padding: 5px 12px;
+            background: var(--light);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag-item {
+            position: relative;
+        }
+
+        .tag-checkbox {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .tag-label {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--light);
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--light-gray);
+        }
+
+        .tag-checkbox:checked + .tag-label {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline:disabled {
+            background: transparent;
+            border-color: var(--gray);
+            color: var(--gray);
+        }
+
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .message-success {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+
+        .message-error {
+            background-color: rgba(239, 71, 111, 0.1);
+            color: #ef476f;
+            border: 1px solid rgba(239, 71, 111, 0.3);
+        }
+
+        .level-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .level-badge {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            width: 120px;
+        }
+
+        .min-level {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+
+        .max-level {
+            background-color: rgba(114, 9, 183, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(114, 9, 183, 0.3);
+        }
+
+        .divider {
+            margin: 0 10px;
+            color: var(--gray);
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                margin: 10px;
+                max-width: 100%;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .steps {
+                padding: 10px 20px;
+            }
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
-
-<div style="background: #ffffff; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px; width: 100%; max-width: 400px; text-align: center;">
-    <h1 style="color: #007bff; font-size: 24px; font-weight: bold;">📌 PS Everyday</h1>
-    <p style="color: #333; font-size: 16px; margin-top: 10px;">매일 알고리즘 문제를 추천받고 싶다면 이메일을 등록하세요!</p>
-
-    <form th:action="@{/subscribe}" method="post" style="margin-top: 20px;">
-        <div style="text-align: left; margin-bottom: 15px;">
-            <label for="email" style="font-size: 14px; font-weight: bold; color: #333;">이메일</label>
-            <input type="email" id="email" name="email" required
-                   style="margin-top: 5px; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; outline: none; box-sizing: border-box;">
-        </div>
-        <button type="submit"
-                style="margin-top: 10px; background: #007bff; color: #ffffff; font-weight: bold; font-size: 14px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; transition: background 0.3s;">
-            ✅ 구독하기
-        </button>
-    </form>
-
-    <div th:if="${showVerificationForm}" style="margin-top: 20px;">
-        <h3 style="color: #007bff; font-size: 18px; font-weight: bold;">인증 코드 입력</h3>
-        <form th:action="@{/verify}" method="post" style="margin-top: 15px;">
-            <input type="hidden" name="email" th:value="${email}">
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label for="verificationCode" style="font-size: 14px; font-weight: bold; color: #333;">인증 코드</label>
-                <input type="text" id="verificationCode" name="verificationCode" required
-                       style="margin-top: 5px; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; outline: none; box-sizing: border-box;">
-            </div>
-            <button type="submit"
-                    style="margin-top: 10px; background: #28a745; color: #ffffff; font-weight: bold; font-size: 14px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; transition: background 0.3s;">
-                인증하기
-            </button>
-        </form>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-code"></i> PS Everyday</h1>
+        <p>매일 알고리즘 문제를 추천받고 실력을 향상시키세요!</p>
     </div>
 
-    <div th:if="${showPreferenceForm}" style="margin-top: 20px;">
-        <h3 style="color: #007bff; font-size: 18px; font-weight: bold;">선호도 설정</h3>
-        <form th:action="@{/save-preferences}" method="post" style="margin-top: 15px;">
-            <input type="hidden" name="email" th:value="${email}">
+    <div class="steps">
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+        <div class="step active" id="step-1">
+            <div class="step-number">1</div>
+            <div class="step-title">이메일</div>
+        </div>
+        <div class="step" id="step-2">
+            <div class="step-number">2</div>
+            <div class="step-title">인증</div>
+        </div>
+        <div class="step" id="step-3">
+            <div class="step-number">3</div>
+            <div class="step-title">설정</div>
+        </div>
+    </div>
 
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 14px; font-weight: bold; color: #333;">문제 난이도 범위</label>
-                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <select name="minTier" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                        <option value="">최소 난이도</option>
-                        <option th:each="level : ${problemLevels}"
-                                th:value="${level.level}"
-                                th:text="${level.name}">
-                        </option>
-                    </select>
-                    <select name="maxTier" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-                        <option value="">최대 난이도</option>
-                        <option th:each="level : ${problemLevels}"
-                                th:value="${level.level}"
-                                th:text="${level.name}">
-                        </option>
-                    </select>
+    <div class="content">
+        <!-- 서버 메시지가 있으면 표시 -->
+        <div th:if="${message}" id="serverMessage" style="display: none;" th:text="${message}"></div>
+
+        <!-- 이메일 입력 단계 -->
+        <div class="form-step" id="form-step-1" th:classappend="${!showVerificationForm && !showPreferenceForm ? 'active' : ''}">
+            <form id="email-form" th:action="@{/subscribe}" method="post">
+                <div class="form-group">
+                    <label for="email">이메일 주소</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com" required>
                 </div>
-            </div>
+                <div class="buttons">
+                    <button type="submit" class="btn" id="email-submit-btn">다음 단계 <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </form>
+        </div>
 
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 14px; font-weight: bold; color: #333;">선호하는 태그</label>
-                <div style="margin-top: 5px; display: flex; flex-wrap: wrap; gap: 5px;">
-                    <div th:each="tag : ${availableTags}" style="display: inline-block;">
-                        <input type="checkbox" th:id="${tag.id}" th:name="tags" th:value="${tag.id}" style="display: none;">
-                        <label th:for="${tag.id}"
-                               style="display: inline-block; padding: 5px 10px; border: 1px solid #ccc; border-radius: 15px; cursor: pointer; font-size: 12px;"
-                               th:text="${tag.displayName}">
-                        </label>
+        <!-- 인증 코드 입력 단계 -->
+        <div class="form-step" id="form-step-2" th:classappend="${showVerificationForm ? 'active' : ''}">
+            <form id="verification-form" th:action="@{/verify}" method="post">
+                <input type="hidden" name="email" id="verification-email" th:value="${email}">
+                <div class="form-group">
+                    <label for="verificationCode">인증 코드 입력</label>
+                    <input type="text" id="verificationCode" name="verificationCode" class="form-control" placeholder="6자리 코드를 입력하세요" required>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--gray);">
+                        <i class="fas fa-info-circle"></i> 입력하신 이메일로 전송된 인증 코드를 입력해주세요.
+                    </p>
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="btn" id="verification-submit-btn">인증하기</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 선호도 설정 단계 -->
+        <div class="form-step" id="form-step-3" th:classappend="${showPreferenceForm ? 'active' : ''}">
+            <form id="preference-form" th:action="@{/save-preferences}" method="post">
+                <input type="hidden" name="email" id="preference-email" th:value="${email}">
+
+                <div class="form-group">
+                    <label>문제 난이도 범위</label>
+                    <div class="range-slider">
+                        <div class="level-display">
+                            <div class="level-badge min-level" id="min-tier-display">선택 안함</div>
+                            <div class="divider">~</div>
+                            <div class="level-badge max-level" id="max-tier-display">선택 안함</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="minTier">최소 난이도</label>
+                        <select id="minTier" name="minTier" class="form-control">
+                            <option value="">선택 안함</option>
+                            <option th:each="level : ${problemLevels}" th:value="${level.level}" th:text="${level.name}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxTier">최대 난이도</label>
+                        <select id="maxTier" name="maxTier" class="form-control">
+                            <option value="">선택 안함</option>
+                            <option th:each="level : ${problemLevels}" th:value="${level.level}" th:text="${level.name}"></option>
+                        </select>
                     </div>
                 </div>
-            </div>
 
-            <button type="submit"
-                    style="margin-top: 10px; background: #28a745; color: #ffffff; font-weight: bold; font-size: 14px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; transition: background 0.3s;">
-                구독하기
-            </button>
-        </form>
+                <div class="form-group">
+                    <label>선호하는 태그</label>
+                    <div class="tag-container">
+                        <div th:each="tag : ${availableTags}" class="tag-item">
+                            <input type="checkbox" th:id="'tag-' + ${tag.id}" name="tags" th:value="${tag.id}" class="tag-checkbox">
+                            <label th:for="'tag-' + ${tag.id}" class="tag-label" th:text="${tag.displayName}"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn" id="preference-submit-btn">구독하기 <i class="fas fa-check"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 메시지 영역 -->
+        <div id="message-area"></div>
     </div>
-
-    <div th:if="${message}" th:text="${message}" style="margin-top: 20px; color: #28a745; font-size: 14px; font-weight: bold;"></div>
 </div>
 
 <script>
-    // 체크박스 스타일링을 위한 스크립트
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const label = document.querySelector(`label[for="${this.id}"]`);
-            if (this.checked) {
-                label.style.backgroundColor = '#007bff';
-                label.style.color = '#ffffff';
-                label.style.borderColor = '#007bff';
+    document.addEventListener('DOMContentLoaded', function() {
+        // 상태 관리
+        let currentStep = 1;
+        let userEmail = '';
+        // 폼 제출 중복 방지를 위한 상태
+        let isSubmitting = false;
+
+        // 서버에서 이미 렌더링된 값을 읽습니다
+        const messageElement = document.getElementById('serverMessage'); // 메시지를 담을 요소에 ID 부여
+        const serverMessage = messageElement ? messageElement.textContent : '';
+
+        // 폼의 표시 여부는 요소의 존재 여부로 확인
+        const verificationFormElement = document.getElementById('verificationForm');
+        const preferenceFormElement = document.getElementById('preferenceForm');
+        const showVerificationForm = document.getElementById('form-step-2').classList.contains('active');
+        const showPreferenceForm = document.getElementById('form-step-3').classList.contains('active');
+
+        // 이메일 값 읽기
+        const emailInput = document.getElementById('preference-email');
+        const emailValue = emailInput ? emailInput.value : '';
+
+        // 서버 상태에 따라 초기 단계 설정
+        if (showVerificationForm) {
+            currentStep = 2;
+            userEmail = emailValue;
+        } else if (showPreferenceForm) {
+            currentStep = 3;
+            userEmail = emailValue;
+        }
+
+        // 현재 단계 설정 및 화면 업데이트
+        setActiveStep(currentStep);
+        updateUserEmail();
+
+        // 메시지 표시
+        if (serverMessage) {
+            showMessage(serverMessage);
+        }
+
+        // 이메일 폼 제출 처리
+        const emailForm = document.getElementById('email-form');
+        const emailSubmitBtn = document.getElementById('email-submit-btn');
+
+        if (emailForm) {
+            emailForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // 이미 제출 중이라면 중복 요청 방지
+                if (isSubmitting) return;
+
+                isSubmitting = true;
+                setButtonLoading(emailSubmitBtn, true);
+
+                userEmail = document.getElementById('email').value;
+
+                // 폼 제출 대신 AJAX 요청 구현
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            goToStep(2);
+                            showMessage('인증 코드가 이메일로 전송되었습니다.');
+                        } else {
+                            showMessage('이메일 전송 중 오류가 발생했습니다.', false);
+                        }
+                    })
+                    .catch(() => {
+                        showMessage('서버 연결에 실패했습니다.', false);
+                    })
+                    .finally(() => {
+                        isSubmitting = false;
+                        setButtonLoading(emailSubmitBtn, false);
+                    });
+            });
+        }
+
+        // 인증 코드 폼 제출 처리
+        const verificationForm = document.getElementById('verification-form');
+        const verificationSubmitBtn = document.getElementById('verification-submit-btn');
+
+        if (verificationForm) {
+            verificationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // 이미 제출 중이라면 중복 요청 방지
+                if (isSubmitting) return;
+
+                isSubmitting = true;
+                setButtonLoading(verificationSubmitBtn, true);
+
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            goToStep(3);
+                            showMessage(data.message);
+                        } else {
+                            showMessage(data.message, false);
+                        }
+                    })
+
+                        .catch(() => {
+                        showMessage('서버 연결에 실패했습니다.', false);
+                    })
+                    .finally(() => {
+                        isSubmitting = false;
+                        setButtonLoading(verificationSubmitBtn, false);
+                    });
+            });
+        }
+
+        // 선호도 설정 폼 제출 처리
+        const preferenceForm = document.getElementById('preference-form');
+        const preferenceSubmitBtn = document.getElementById('preference-submit-btn');
+
+        if (preferenceForm) {
+            preferenceForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // 이미 제출 중이라면 중복 요청 방지
+                if (isSubmitting) return;
+
+                isSubmitting = true;
+                setButtonLoading(preferenceSubmitBtn, true);
+
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('구독이 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.');
+                            window.location.href='/';
+                        } else {
+                            showMessage('구독 처리 중 오류가 발생했습니다. 다시 시도해 주세요.', false);
+                            isSubmitting = false;
+                            setButtonLoading(preferenceSubmitBtn, false);
+                        }
+                    })
+                    .catch(() => {
+                        showMessage('서버 연결에 실패했습니다.', false);
+                        isSubmitting = false;
+                        setButtonLoading(preferenceSubmitBtn, false);
+                    });
+            });
+        }
+
+        // 이전 단계 버튼 핸들러
+        const backToEmailBtn = document.getElementById('back-to-email');
+        if (backToEmailBtn) {
+            backToEmailBtn.addEventListener('click', function() {
+                goToStep(1);
+            });
+        }
+
+        const backToVerificationBtn = document.getElementById('back-to-verification');
+        if (backToVerificationBtn) {
+            backToVerificationBtn.addEventListener('click', function() {
+                goToStep(2);
+            });
+        }
+
+        // 난이도 선택 UI 업데이트
+        const minTierSelect = document.getElementById('minTier');
+        const maxTierSelect = document.getElementById('maxTier');
+        const minTierDisplay = document.getElementById('min-tier-display');
+        const maxTierDisplay = document.getElementById('max-tier-display');
+
+        if (minTierSelect) {
+            minTierSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                minTierDisplay.textContent = selectedOption.text !== '' ? selectedOption.text : '선택 안함';
+            });
+        }
+
+        if (maxTierSelect) {
+            maxTierSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                maxTierDisplay.textContent = selectedOption.text !== '' ? selectedOption.text : '선택 안함';
+            });
+        }
+
+        // 버튼 로딩 상태 설정 함수
+        function setButtonLoading(button, isLoading) {
+            if (!button) return;
+
+            if (isLoading) {
+                button.disabled = true;
+                button.originalText = button.innerHTML;
+                button.classList.add('btn-loading');
             } else {
-                label.style.backgroundColor = '';
-                label.style.color = '';
-                label.style.borderColor = '#ccc';
+                button.disabled = false;
+                if (button.originalText) {
+                    button.innerHTML = button.originalText;
+                }
+                button.classList.remove('btn-loading');
             }
-        });
+        }
+
+        // 단계 이동 함수
+        function goToStep(step) {
+            currentStep = step;
+            setActiveStep(step);
+            updateUserEmail();
+        }
+
+        // 이메일 자동 채우기
+        function updateUserEmail() {
+            const verificationEmailInput = document.getElementById('verification-email');
+            const preferenceEmailInput = document.getElementById('preference-email');
+
+            if (verificationEmailInput) verificationEmailInput.value = userEmail;
+            if (preferenceEmailInput) preferenceEmailInput.value = userEmail;
+        }
+
+        // 현재 단계 표시 함수
+        function setActiveStep(step) {
+            // 프로그레스 바 업데이트
+            const progressBar = document.getElementById('progress-bar');
+            const percent = ((step - 1) / 2) * 100;
+            progressBar.style.width = percent + '%';
+
+            // 단계 상태 업데이트
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById('step-' + i);
+                const formStep = document.getElementById('form-step-' + i);
+
+                if (i < step) {
+                    stepElement.className = 'step completed';
+                } else if (i === step) {
+                    stepElement.className = 'step active';
+                } else {
+                    stepElement.className = 'step';
+                }
+
+                // 해당 단계의 폼만 표시
+                if (formStep) {
+                    formStep.className = i === step ? 'form-step active' : 'form-step';
+                }
+            }
+        }
+
+        // 메시지 표시 함수
+        function showMessage(message, isSuccess = true) {
+            const messageArea = document.getElementById('message-area');
+            messageArea.innerHTML = `<div class="message ${isSuccess ? 'message-success' : 'message-error'}">${message}</div>`;
+        }
     });
 </script>
-
 </body>
 </html>
