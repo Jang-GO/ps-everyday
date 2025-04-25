@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,30 +30,38 @@ public class ProblemScheduler {
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
     private final JdbcRecommendationRepository jdbcRecommendationRepository;
+    private final RecommendationRepository recommendationRepository;
 
-    @Scheduled(cron = "* * 8 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
     @Transactional
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
         List<Recommendation> recommendationsToSave = new ArrayList<>();
+        Random random = new Random();
 
         for(Subscriber subscriber: subscribers){
-            List<Problem> problems;
+            // 1. 해당 구독자에게 이미 추천된 문제 ID 목록 조회
+            Set<Long> recommendedProblemIds = recommendationRepository.findRecommendedProblemIdsBySubscriber(subscriber);
+            log.debug("구독자 {}에게 이미 추천된 문제 ID 개수: {}", subscriber.getEmail(), recommendedProblemIds.size());
 
-            // 선호 티어와 태그 정보 확인
-            boolean hasTierPreference = subscriber.getTierPreference() != null;
-            boolean hasTagPreference = !subscriber.getTagPreferences().isEmpty();
+            // 2. 선호에 맞는 문제 후보 목록 조회
+            List<Problem> problems = filterProblems(subscriber);
 
-            log.info("{}의 선호 태그 : {}", subscriber.getEmail(), subscriber.getTagPreferenceNames());
+            // 3. 추천된 문제 제외
+            List<Problem> problemsToRecommend = problems.stream()
+                    .filter(p -> !recommendedProblemIds.contains(p.getProblemId()))
+                    .collect(Collectors.toList());
 
-            problems = filterProblems(subscriber, hasTierPreference, hasTagPreference);
-
-            if (problems.isEmpty()) {
-                log.warn("구독자 {}에게 추천할 문제가 없습니다.", subscriber.getEmail());
+            if (problemsToRecommend.isEmpty()) {
+                // 필터링 후 추천할 문제가 없는 경우 (선호도 맞는 문제가 없거나, 모두 이미 추천된 경우)
+                log.warn("구독자 {}에게 추천할 새로운 문제가 없습니다. (선호도 필터링 후: {}, 추천 제외 후: {})",
+                        subscriber.getEmail(), problems.size(), problemsToRecommend.size());
                 continue;
             }
 
-            Problem randomProblem = problems.get(new Random().nextInt(problems.size()));
+            log.info("{}의 선호 태그 : {}", subscriber.getEmail(), subscriber.getTagPreferenceNames());
+
+            Problem randomProblem = problemsToRecommend.get(random.nextInt(problemsToRecommend.size()));
 
             log.info("구독자 {}에게 문제 추천: {} (Level: {}, Tags: {})",
                     subscriber.getEmail(),
@@ -80,28 +89,25 @@ public class ProblemScheduler {
         log.info("총 {}건의 추천 기록이 저장되었습니다.", recommendations.size());
     }
 
-    private List<Problem> filterProblems(Subscriber subscriber, boolean hasTierPreference, boolean hasTagPreference) {
-        List<Problem> problems;
+    private List<Problem> filterProblems(Subscriber subscriber) {
+        boolean hasTierPreference = subscriber.getTierPreference() != null;
+        boolean hasTagPreference = !subscriber.getTagPreferences().isEmpty();
+
         if (hasTierPreference && hasTagPreference) {
-            // 선호 티어와 태그 모두 있는 경우
-            problems = problemRepository.findProblemsBySubscriberPreferences(
+            return problemRepository.findProblemsBySubscriberPreferences(
                     subscriber.getTierPreference().getMinTier(),
                     subscriber.getTierPreference().getMaxTier(),
                     subscriber.getId()
             );
         } else if (hasTierPreference) {
-            // 선호 티어만 있는 경우
-            problems = problemRepository.findByLevelBetween(
+            return problemRepository.findByLevelBetween(
                     subscriber.getTierPreference().getMinTier(),
                     subscriber.getTierPreference().getMaxTier()
             );
         } else if (hasTagPreference) {
-            // 선호 태그만 있는 경우
-            problems = problemRepository.findByTagPreferences(subscriber.getId());
+            return problemRepository.findByTagPreferences(subscriber.getId());
         } else {
-            // 둘 다 없는 경우
-            problems = problemRepository.findAll();
+            return problemRepository.findAll(); // 필요시 findAll에도 추천 제외 로직 추가 고려
         }
-        return problems;
     }
 }

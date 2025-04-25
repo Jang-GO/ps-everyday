@@ -1,7 +1,15 @@
 package org.janggo.pseveryday.domain.recommendation.repository;
 
 import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
+import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Set;
 
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
+
+    @Query("SELECT r.problem.problemId FROM Recommendation r WHERE r.subscriber =: subscriber")
+    Set<Long> findRecommendedProblemIdsBySubscriber(@Param("subscriber") Subscriber subscriber);
 }
