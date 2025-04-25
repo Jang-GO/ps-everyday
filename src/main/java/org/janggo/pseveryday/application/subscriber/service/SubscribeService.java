@@ -1,6 +1,8 @@
 package org.janggo.pseveryday.application.subscriber.service;
 
 import lombok.RequiredArgsConstructor;
+import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
+import org.janggo.pseveryday.domain.recommendation.repository.RecommendationRepository;
 import org.janggo.pseveryday.domain.subscriber.repository.SubscriberRepository;
 import org.janggo.pseveryday.application.mail.service.MailService;
 import org.janggo.pseveryday.application.mail.service.VerificationService;
@@ -11,18 +13,20 @@ import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class SubscribeService {
 
     private final VerificationService verificationService;
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
     private final TagRepository tagRepository;
+    private final RecommendationRepository recommendationRepository;
 
     /**
      * 이메일 등록 및 인증 코드 전송
@@ -72,11 +76,22 @@ public class SubscribeService {
         mailService.sendGreetingMail(email);
     }
 
+    @Transactional
     public boolean unsubscribe(String email) {
         if (subscriberRepository.existsByEmail(email)) {
             subscriberRepository.deleteByEmail(email);
             return true;
         }
         return false;
+    }
+
+    public List<Recommendation> getRecommendationsByEmail(String email) {
+        Optional<Subscriber> subscriberOptional = subscriberRepository.findByEmail(email);
+        if (subscriberOptional.isPresent()) {
+            return recommendationRepository.findBySubscriberWithProblem(subscriberOptional.get());
+        } else {
+            // 구독자가 존재하지 않으면 빈 리스트 반환
+            return Collections.emptyList();
+        }
     }
 }

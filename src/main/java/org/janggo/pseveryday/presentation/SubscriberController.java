@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.janggo.pseveryday.application.subscriber.service.SubscribeService;
 import org.janggo.pseveryday.domain.problem.dto.ProblemLevel;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
+import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -94,5 +95,14 @@ public class SubscriberController {
         }
 
         return "home";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(@RequestParam("email") String email, Model model) {
+        List<Recommendation> recommendations = subscribeService.getRecommendationsByEmail(email);
+        model.addAttribute("email", email);
+        model.addAttribute("recommendations", recommendations);
+        // 추천 목록이 비어있는 경우 등의 처리는 템플릿에서 수행
+        return "dashboard"; // dashboard.html 템플릿 반환
     }
 }
