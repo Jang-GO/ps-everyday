@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
 
-    @Query("SELECT r.problem.problemId FROM Recommendation r WHERE r.subscriber =: subscriber")
+    @Query("SELECT r.problem.problemId FROM Recommendation r WHERE r.subscriber = :subscriber")
     Set<Long> findRecommendedProblemIdsBySubscriber(@Param("subscriber") Subscriber subscriber);
 
     @Query("SELECT r FROM Recommendation r JOIN FETCH r.problem WHERE r.subscriber = :subscriber ORDER BY r.recommendedAt DESC")

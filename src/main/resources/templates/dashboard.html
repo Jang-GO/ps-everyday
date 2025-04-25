@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추천 문제 대시보드</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f7f7fc; /* home.html 배경색 유지 */
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column; /* 컨텐츠가 길어질 수 있으므로 column으로 변경 */
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { /* 대시보드용 컨테이너 스타일 조정 */
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 900px; /* 테이블 표시를 위해 너비 증가 */
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+
+        .header {
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p { /* 대시보드용 설명 추가 가능 */
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Steps는 대시보드에 필요 없으므로 제거하거나 주석 처리 */
+        /* .steps { ... } */
+
+        .content {
+            padding: 30px;
+        }
+
+        /* Form 관련 스타일은 대시보드에 직접 필요하지 않지만, 버튼 등 공통 요소 위해 유지 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--dark);
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        /* Range Slider, Tag 관련 스타일은 대시보드에 불필요 */
+        /* .range-slider { ... } */
+        /* .tag-container { ... } */
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            /* width: 100%; 대시보드에서는 100% 아닐 수 있음 */
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* ... (btn-outline, btn:disabled, btn-loading 등 나머지 버튼 스타일) ... */
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline:disabled {
+            background: transparent;
+            border-color: var(--gray);
+            color: var(--gray);
+        }
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s infinite linear;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Message 스타일은 유지 */
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .message-success {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+        .message-error {
+            background-color: rgba(239, 71, 111, 0.1);
+            color: #ef476f;
+            border: 1px solid rgba(239, 71, 111, 0.3);
+        }
+
+        /* Level display 관련 스타일은 대시보드 테이블에 적용될 수 있으므로 유지 */
+        .level-badge {
+            padding: 5px 10px; /* 테이블 셀에 맞게 패딩 조정 */
+            border-radius: 6px;
+            font-size: 13px; /* 테이블에 맞게 폰트 크기 조정 */
+            font-weight: 500;
+            text-align: center;
+            display: inline-block; /* 테이블 셀 내에서 사용 */
+        }
+        .min-level { /* 필요시 레벨별 색상 적용 가능 */
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+        .max-level {
+            background-color: rgba(114, 9, 183, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(114, 9, 183, 0.3);
+        }
+
+        /* 대시보드 테이블 스타일 */
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px; /* 테이블 기본 폰트 크기 */
+        }
+        .dashboard-table th,
+        .dashboard-table td {
+            border: 1px solid var(--light-gray);
+            padding: 12px 15px; /* 셀 패딩 조정 */
+            text-align: left;
+            vertical-align: middle; /* 셀 내용 수직 중앙 정렬 */
+        }
+        .dashboard-table th {
+            background-color: var(--light);
+            font-weight: 600; /* 헤더 폰트 굵게 */
+            color: var(--dark);
+        }
+        .dashboard-table tbody tr:nth-child(even) {
+            background-color: #fdfdff; /* 짝수 행 배경색 약간 다르게 */
+        }
+        .dashboard-table tbody tr:hover {
+            background-color: #f1f1f9; /* 행 hover 효과 */
+        }
+        .dashboard-table a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .dashboard-table a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .empty-message {
+            color: var(--gray);
+            margin-top: 30px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .home-link-container { /* 홈으로 가기 버튼 컨테이너 */
+            margin-top: 30px;
+            text-align: center; /* 버튼 중앙 정렬 */
+        }
+
+        .home-link { /* 홈으로 가기 버튼 스타일 */
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .home-link:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 반응형 스타일 */
+        @media (max-width: 768px) { /* 태블릿 사이즈 조정 */
+            .container {
+                max-width: 95%;
+            }
+            .dashboard-table th,
+            .dashboard-table td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+            .level-badge {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+        }
+
+        @media (max-width: 576px) { /* 모바일 사이즈 조정 */
+            body {
+                padding: 10px;
+            }
+            .container {
+                margin: 10px 0; /* 상하 여백만 */
+                max-width: 100%;
+                border-radius: 8px; /* 모바일에서 radius 약간 줄임 */
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+            .content {
+                padding: 15px;
+            }
+            .dashboard-table {
+                font-size: 12px;
+            }
+            .dashboard-table th,
+            .dashboard-table td {
+                padding: 8px 5px; /* 모바일에서 패딩 더 줄임 */
+            }
+            .level-badge {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+            .home-link {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-history"></i> 추천 문제 기록</h1>
+        <p><span th:text="${email}"></span>님이 추천받으신 문제 목록입니다.</p>
+    </div>
+
+    <div class="content">
+        <div th:if="${recommendations == null || recommendations.isEmpty()}" class="empty-message">
+            <p><i class="fas fa-box-open"></i> 아직 추천받은 문제가 없습니다.</p>
+        </div>
+
+        <div th:unless="${recommendations == null || recommendations.isEmpty()}">
+            <table class="dashboard-table">
+                <thead>
+                <tr>
+                    <th>추천일시</th>
+                    <th>문제 번호</th>
+                    <th>문제 제목</th>
+                    <th>레벨</th>
+                    <th>링크</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- recommendations 리스트 순회 -->
+                <tr th:each="rec : ${recommendations}">
+                    <!-- 추천 시간이 null이 아닌 경우 포맷팅 -->
+                    <td th:text="${rec.recommendedAt != null ? #temporals.format(rec.recommendedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">추천일시</td>
+                    <!-- 문제가 null이 아닌 경우 문제 정보 표시 -->
+                    <td th:text="${rec.problem != null ? rec.problem.problemId : 'N/A'}">문제 번호</td>
+                    <td th:text="${rec.problem != null ? rec.problem.titleKo : 'N/A'}">문제 제목</td>
+                    <td>
+                        <!-- 레벨 정보를 level-badge 스타일로 표시 -->
+                        <span th:if="${rec.problem != null && rec.problem.level != null}"
+                              class="level-badge"
+                              th:text="${rec.problem.problemLevel.displayName}">
+                            </span>
+                        <span th:unless="${rec.problem != null && rec.problem.level != null}">N/A</span>
+                    </td>
+                    <td>
+                        <!-- 문제가 null이 아니고 problemId가 있는 경우 링크 생성 -->
+                        <a th:if="${rec.problem != null && rec.problem.problemId != null}"
+                           th:href="@{'https://www.acmicpc.net/problem/' + ${rec.problem.problemId}}"
+                           target="_blank" title="백준에서 문제 보기">
+                            <i class="fas fa-external-link-alt"></i> 보기
+                        </a>
+                        <span th:unless="${rec.problem != null && rec.problem.problemId != null}">링크 없음</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="home-link-container">
+            <a href="/" class="home-link"><i class="fas fa-home"></i> 홈으로 돌아가기</a>
+        </div>
+    </div> <!-- content end -->
+</div> <!-- container end -->
+
+</body>
+</html>

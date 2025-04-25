@@ -32,7 +32,8 @@ public class ProblemScheduler {
     private final JdbcRecommendationRepository jdbcRecommendationRepository;
     private final RecommendationRepository recommendationRepository;
 
-    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
     @Transactional
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
