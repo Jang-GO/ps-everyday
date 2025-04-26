@@ -10,6 +10,8 @@ import org.janggo.pseveryday.domain.problem.entity.Tag;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,5 +95,14 @@ public class SubscribeService {
             // 구독자가 존재하지 않으면 빈 리스트 반환
             return Collections.emptyList();
         }
+    }
+
+    public Page<Recommendation> getRecommendationsByEmail(String email, Pageable pageable) {
+        // 이메일로 Subscriber 찾기 (예시)
+        Subscriber subscriber = subscriberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email: " + email));
+        // 해당 Subscriber의 Recommendation 목록을 페이징하여 조회
+        return recommendationRepository.findBySubscriberOrderByRecommendedAtDesc(subscriber, pageable);
+        // 또는 필요에 따라 다른 조회 메서드 사용
     }
 }

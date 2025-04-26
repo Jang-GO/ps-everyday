@@ -2,6 +2,8 @@ package org.janggo.pseveryday.domain.recommendation.repository;
 
 import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,6 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
 
     @Query("SELECT r FROM Recommendation r JOIN FETCH r.problem WHERE r.subscriber = :subscriber ORDER BY r.recommendedAt DESC")
     List<Recommendation> findBySubscriberWithProblem(@Param("subscriber") Subscriber subscriber);
+
+    Page<Recommendation> findBySubscriberOrderByRecommendedAtDesc(Subscriber subscriber, Pageable pageable);
 }

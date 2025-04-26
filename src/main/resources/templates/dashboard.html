@@ -344,6 +344,28 @@
             color: white;
             border-color: var(--primary);
         }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a, .pagination span {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid var(--light-gray);
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .pagination .active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pagination .disabled {
+            color: var(--light-gray);
+            pointer-events: none;
+            border-color: var(--light-gray);
+        }
     </style>
 </head>
 <body>
@@ -355,11 +377,14 @@
     </div>
 
     <div class="content">
-        <div th:if="${recommendations == null || recommendations.isEmpty()}" class="empty-message">
+        <div th:if="${recommendationPage == null || recommendationPage.isEmpty()}" class="empty-message">
             <p><i class="fas fa-box-open"></i> 아직 추천받은 문제가 없습니다.</p>
         </div>
 
-        <div th:unless="${recommendations == null || recommendations.isEmpty()}">
+        <div th:unless="${recommendationPage == null || recommendationPage.isEmpty()}">
+            <!-- 정렬 버튼 제거됨 -->
+            <!-- <div class="sort-buttons"> ... </div> -->
+
             <table class="dashboard-table">
                 <thead>
                 <tr>
@@ -371,16 +396,11 @@
                 </tr>
                 </thead>
                 <tbody id="recommendation-tbody">
-                <!-- recommendations (DTO 리스트) 순회 -->
-                <tr th:each="rec : ${recommendations}">
-                    <!-- 추천 시간이 null이 아닌 경우 포맷팅 (DTO 필드 사용) -->
+                <tr th:each="rec : ${recommendationPage.content}">
                     <td th:text="${rec.recommendedAt != null ? #temporals.format(rec.recommendedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">추천일시</td>
-                    <!-- 문제 번호 (DTO 필드 직접 사용) -->
                     <td th:text="${rec.problemId != null ? rec.problemId : 'N/A'}">문제 번호</td>
-                    <!-- 문제 제목 (DTO 필드 직접 사용) -->
                     <td th:text="${rec.titleKo != null ? rec.titleKo : 'N/A'}">문제 제목</td>
                     <td>
-                        <!-- 레벨 표시 (DTO 필드 사용) -->
                         <span th:if="${rec.levelDisplayName != null && rec.levelDisplayName != 'N/A'}"
                               class="level-badge"
                               th:text="${rec.levelDisplayName}">
@@ -388,7 +408,6 @@
                         <span th:unless="${rec.levelDisplayName != null && rec.levelDisplayName != 'N/A'}">N/A</span>
                     </td>
                     <td>
-                        <!-- 링크 생성 (DTO 필드 사용) -->
                         <a th:if="${rec.problemId != null}"
                            th:href="@{'https://www.acmicpc.net/problem/' + ${rec.problemId}}"
                            target="_blank" title="백준에서 문제 보기">
@@ -399,6 +418,31 @@
                 </tr>
                 </tbody>
             </table>
+
+            <!-- 페이징 컨트롤 (sort 파라미터 제거) -->
+            <div class="pagination" th:if="${recommendationPage.totalPages > 1}">
+                <!-- 이전 페이지 링크 -->
+                <a th:href="${recommendationPage.first} ? '#' : @{/dashboard(email=${email}, page=${recommendationPage.number - 1}, size=${recommendationPage.size})}"
+                   th:classappend="${recommendationPage.first} ? 'disabled'">&laquo; 이전</a>
+
+                <!-- 페이지 번호 링크 -->
+                <th:block th:with="
+                    start=${T(java.lang.Math).max(0, recommendationPage.number - 2)},
+                    end=${T(java.lang.Math).min(recommendationPage.totalPages - 1, recommendationPage.number + 2)}">
+                    <span th:if="${start > 0}">...</span>
+                    <th:block th:each="pageNum : ${#numbers.sequence(start, end)}">
+                        <a th:href="@{/dashboard(email=${email}, page=${pageNum}, size=${recommendationPage.size})}"
+                           th:text="${pageNum + 1}"
+                           th:classappend="${pageNum == recommendationPage.number} ? 'active'"></a>
+                    </th:block>
+                    <span th:if="${end < recommendationPage.totalPages - 1}">...</span>
+                </th:block>
+
+                <!-- 다음 페이지 링크 -->
+                <a th:href="${recommendationPage.last} ? '#' : @{/dashboard(email=${email}, page=${recommendationPage.number + 1}, size=${recommendationPage.size})}"
+                   th:classappend="${recommendationPage.last} ? 'disabled'">다음 &raquo;</a>
+            </div>
+
         </div>
 
         <div class="home-link-container">

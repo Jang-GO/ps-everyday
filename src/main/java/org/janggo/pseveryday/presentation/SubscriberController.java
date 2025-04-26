@@ -6,6 +6,11 @@ import org.janggo.pseveryday.domain.problem.dto.ProblemLevel;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.recommendation.dto.RecommendationDto;
 import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
+import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,17 +104,22 @@ public class SubscriberController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam("email") String email, Model model) {
-        List<Recommendation> recommendations = subscribeService.getRecommendationsByEmail(email);
+    public String dashboard(@RequestParam("email") String email, Model model,
+                            @PageableDefault Pageable pageable) {
 
-        // Recommendation 엔티티 리스트를 RecommendationDto 리스트로 변환
-        List<RecommendationDto> recommendationDtos = recommendations.stream()
-                .map(RecommendationDto::new) // 각 Recommendation 객체를 DTO로 변환
-                .toList(); // Java 16+ / .collect(Collectors.toList()); for older versions
+
+        // 서비스 호출 시 pageable 전달
+        Page<Recommendation> recommendationPage = subscribeService.getRecommendationsByEmail(email, pageable);
+
+        // Page<Recommendation> 를 Page<RecommendationDto> 로 변환 (내용만 변환)
+        Page<RecommendationDto> recommendationDtoPage = recommendationPage.map(RecommendationDto::new);
 
         model.addAttribute("email", email);
-        model.addAttribute("recommendations", recommendationDtos);
-        // 추천 목록이 비어있는 경우 등의 처리는 템플릿에서 수행
-        return "dashboard"; // dashboard.html 템플릿 반환
+        // 모델에 DTO 리스트 대신 Page 객체 추가
+        model.addAttribute("recommendationPage", recommendationDtoPage);
+        // 기존 recommendations 속성은 제거하거나 비워둠 (템플릿 호환성 위해)
+        // model.addAttribute("recommendations", recommendationDtoPage.getContent()); // 이렇게 하면 JS에서 문제 발생
+
+        return "dashboard";
     }
 }
