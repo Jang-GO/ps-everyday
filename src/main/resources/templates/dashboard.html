@@ -318,6 +318,32 @@
                 font-size: 14px;
             }
         }
+        /* 정렬 버튼 컨테이너 스타일 추가 */
+        .sort-buttons {
+            margin-bottom: 15px;
+            text-align: right; /* 버튼 오른쪽 정렬 */
+        }
+
+        .sort-buttons .btn-sort {
+            margin-left: 10px;
+            padding: 6px 12px; /* 버튼 크기 약간 작게 */
+            font-size: 13px;
+            background-color: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--light-gray);
+        }
+
+        .sort-buttons .btn-sort:hover {
+            background-color: var(--light-gray);
+            transform: none; /* hover 시 움직임 제거 */
+            box-shadow: none;
+        }
+
+        .sort-buttons .btn-sort.active { /* 현재 정렬 기준 표시 */
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -340,34 +366,35 @@
                     <th>추천일시</th>
                     <th>문제 번호</th>
                     <th>문제 제목</th>
-                    <th>레벨</th>
+                    <th>난이도</th>
                     <th>링크</th>
                 </tr>
                 </thead>
-                <tbody>
-                <!-- recommendations 리스트 순회 -->
+                <tbody id="recommendation-tbody">
+                <!-- recommendations (DTO 리스트) 순회 -->
                 <tr th:each="rec : ${recommendations}">
-                    <!-- 추천 시간이 null이 아닌 경우 포맷팅 -->
+                    <!-- 추천 시간이 null이 아닌 경우 포맷팅 (DTO 필드 사용) -->
                     <td th:text="${rec.recommendedAt != null ? #temporals.format(rec.recommendedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">추천일시</td>
-                    <!-- 문제가 null이 아닌 경우 문제 정보 표시 -->
-                    <td th:text="${rec.problem != null ? rec.problem.problemId : 'N/A'}">문제 번호</td>
-                    <td th:text="${rec.problem != null ? rec.problem.titleKo : 'N/A'}">문제 제목</td>
+                    <!-- 문제 번호 (DTO 필드 직접 사용) -->
+                    <td th:text="${rec.problemId != null ? rec.problemId : 'N/A'}">문제 번호</td>
+                    <!-- 문제 제목 (DTO 필드 직접 사용) -->
+                    <td th:text="${rec.titleKo != null ? rec.titleKo : 'N/A'}">문제 제목</td>
                     <td>
-                        <!-- 레벨 정보를 level-badge 스타일로 표시 -->
-                        <span th:if="${rec.problem != null && rec.problem.level != null}"
+                        <!-- 레벨 표시 (DTO 필드 사용) -->
+                        <span th:if="${rec.levelDisplayName != null && rec.levelDisplayName != 'N/A'}"
                               class="level-badge"
-                              th:text="${rec.problem.problemLevel.displayName}">
+                              th:text="${rec.levelDisplayName}">
                             </span>
-                        <span th:unless="${rec.problem != null && rec.problem.level != null}">N/A</span>
+                        <span th:unless="${rec.levelDisplayName != null && rec.levelDisplayName != 'N/A'}">N/A</span>
                     </td>
                     <td>
-                        <!-- 문제가 null이 아니고 problemId가 있는 경우 링크 생성 -->
-                        <a th:if="${rec.problem != null && rec.problem.problemId != null}"
-                           th:href="@{'https://www.acmicpc.net/problem/' + ${rec.problem.problemId}}"
+                        <!-- 링크 생성 (DTO 필드 사용) -->
+                        <a th:if="${rec.problemId != null}"
+                           th:href="@{'https://www.acmicpc.net/problem/' + ${rec.problemId}}"
                            target="_blank" title="백준에서 문제 보기">
                             <i class="fas fa-external-link-alt"></i> 보기
                         </a>
-                        <span th:unless="${rec.problem != null && rec.problem.problemId != null}">링크 없음</span>
+                        <span th:unless="${rec.problemId != null}">링크 없음</span>
                     </td>
                 </tr>
                 </tbody>
