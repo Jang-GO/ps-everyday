@@ -2,31 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘의 알고리즘 문제</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
-<div style="width: 60%; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
-    <h2 style="color: #007bff; font-size: 24px;">🎯 오늘의 알고리즘 문제</h2>
-    <p style="font-size: 16px; color: #333;">안녕하세요, <span style="font-weight: bold;">PS Everyday</span>입니다!</p>
-    <p style="font-size: 16px; color: #333;">오늘의 랜덤 문제를 추천드립니다:</p>
-
-    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #007bff; font-size: 20px;" th:text="${problem.titleKo}"></h3>
-        <p style="font-size: 16px; color: #333;">
-            <b>난이도: <span th:style="'color:' + ${problem.problemLevel.color}" th:text="${problem.problemLevel.displayName}"></span> </b>
-        </p>
-        <a th:href="${link}" style="display: inline-block; margin-top: 10px; padding: 10px 20px; color: #ffffff; background: #007bff; text-decoration: none; border-radius: 5px; font-weight: bold;">
-            🔗 문제 풀러 가기
-        </a>
+<body style="font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f7f7fc; color: #212529; line-height: 1.6; margin: 0; padding: 0;">
+<div style="width: 90%; max-width: 500px; margin: 30px auto; background: white; padding: 0; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); overflow: hidden;">
+    <div style="padding: 30px; text-align: center; background: linear-gradient(135deg, #4361ee, #7209b7); color: white;">
+        <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 10px;"><i class="fas fa-code"></i> 오늘의 알고리즘 문제</h2>
+        <p style="font-size: 16px; opacity: 0.9;">코딩 실력 향상을 위한 추천 문제</p>
     </div>
 
-    <p style="font-size: 16px; color: #333;">즐거운 코딩 하세요! 🚀</p>
-    <div style="margin-top: 20px; font-size: 14px; color: #888;">
-        <p style="font-size: 14px; color: #888;">📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
-        <p style="font-size: 12px; color: #888; margin-top: 10px;">
-            <a th:href="${baseUrl} + '/unsubscribe?email=' + ${email}" style="color: #888; text-decoration: underline;">구독 취소</a>
-            <a th:href="${baseUrl} + '/dashboard?email=' + ${email}" style="color: #888; text-decoration: underline;">대시보드</a>
-        </p>
+    <div style="padding: 30px; text-align: center;">
+        <p style="font-size: 16px; color: #333;">안녕하세요, <span style="font-weight: bold; color: #4361ee;">PS Everyday</span>입니다!</p>
+        <p style="font-size: 16px; color: #333;">오늘의 랜덤 문제를 추천드립니다:</p>
+
+        <div style="background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef; padding: 20px; margin: 25px 0; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+            <h3 style="color: #4361ee; font-size: 22px; margin-top: 0;" th:text="${problem.titleKo}"></h3>
+            <p style="font-size: 16px; color: #333; margin: 15px 0;">
+                <b>난이도: <span th:style="'color:' + ${problem.problemLevel.color}" th:text="${problem.problemLevel.displayName}"></span> </b>
+            </p>
+            <a th:href="${link}" style="display: inline-block; margin-top: 15px; padding: 12px 24px; color: white; background: #4361ee; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">
+                <i class="fas fa-external-link-alt"></i> 문제 풀러 가기
+            </a>
+        </div>
+
+        <p style="font-size: 16px; color: #333;">즐거운 코딩 하세요! <i class="fas fa-rocket"></i></p>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; font-size: 14px; color: #6c757d;">
+            <p style="font-size: 14px; color: #6c757d;"><i class="fas fa-envelope"></i> PS Everyday | 알고리즘 문제 추천 서비스</p>
+            <p style="font-size: 12px; color: #6c757d; margin-top: 10px;">
+                <a th:href="${baseUrl} + '/unsubscribe?email=' + ${email}" style="color: #6c757d; text-decoration: underline; margin-right: 15px;"><i class="fas fa-times-circle"></i> 구독 취소</a>
+                <a th:href="${baseUrl} + '/dashboard?email=' + ${email}" style="color: #6c757d; text-decoration: underline;"><i class="fas fa-chart-line"></i> 대시보드</a>
+            </p>
+        </div>
     </div>
 </div>
 </body>

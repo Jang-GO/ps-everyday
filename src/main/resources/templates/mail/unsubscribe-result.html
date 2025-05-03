@@ -2,13 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>구독 취소 결과</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
-<div style="width: 90%; max-width: 600px; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); text-align: center;">
-    <h1 style="color: #007bff; font-size: 24px; margin-bottom: 20px;">구독 취소 결과</h1>
-    <p style="font-size: 16px; color: #333; margin-bottom: 20px;" th:text="${message}"></p>
-    <a href="/" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.3s;">홈으로 돌아가기</a>
+<body style="font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f7f7fc; color: #212529; line-height: 1.6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; margin: 0;">
+<div style="background: white; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; overflow: hidden; transition: all 0.3s ease;">
+    <div style="padding: 30px; text-align: center; background: linear-gradient(135deg, #4361ee, #7209b7); color: white;">
+        <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> 구독 취소 결과</h1>
+        <p style="font-size: 16px; opacity: 0.9;">알고리즘 문제 추천 서비스 상태</p>
+    </div>
+
+    <div style="padding: 30px; text-align: center;">
+        <div style="background-color: #f8f9fa; border-radius: 10px; padding: 25px; margin-bottom: 25px;">
+            <i class="fas fa-info-circle" style="font-size: 40px; color: #4361ee; margin-bottom: 15px;"></i>
+            <p style="font-size: 18px; color: #333; margin-bottom: 0;" th:text="${message}"></p>
+        </div>
+
+        <a href="/" style="display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 500; transition: all 0.3s ease;">
+            <i class="fas fa-home"></i> 홈으로 돌아가기
+        </a>
+    </div>
 </div>
 </body>
 </html>
