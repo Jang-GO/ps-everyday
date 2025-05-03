@@ -24,7 +24,8 @@
     <div style="margin-top: 20px; font-size: 14px; color: #888;">
         <p style="font-size: 14px; color: #888;">📩 PS Everyday | 알고리즘 문제 추천 서비스</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
-            <a th:href="@{'http://localhost:8080/unsubscribe?email=' + ${email}}" style="color: #888; text-decoration: underline;">구독 취소</a>
+            <a th:href="${baseUrl} + '/unsubscribe?email=' + ${email}" style="color: #888; text-decoration: underline;">구독 취소</a>
+            <a th:href="${baseUrl} + '/dashboard?email=' + ${email}" style="color: #888; text-decoration: underline;">대시보드</a>
         </p>
     </div>
 </div>

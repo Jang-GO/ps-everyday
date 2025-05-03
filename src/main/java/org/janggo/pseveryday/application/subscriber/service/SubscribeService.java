@@ -87,16 +87,6 @@ public class SubscribeService {
         return false;
     }
 
-    public List<Recommendation> getRecommendationsByEmail(String email) {
-        Optional<Subscriber> subscriberOptional = subscriberRepository.findByEmail(email);
-        if (subscriberOptional.isPresent()) {
-            return recommendationRepository.findBySubscriberWithProblem(subscriberOptional.get());
-        } else {
-            // 구독자가 존재하지 않으면 빈 리스트 반환
-            return Collections.emptyList();
-        }
-    }
-
     public Page<Recommendation> getRecommendationsByEmail(String email, Pageable pageable) {
         // 이메일로 Subscriber 찾기 (예시)
         Subscriber subscriber = subscriberRepository.findByEmail(email)

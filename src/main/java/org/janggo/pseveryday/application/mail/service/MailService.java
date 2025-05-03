@@ -26,6 +26,9 @@ public class MailService {
     @Value("${mail-username}")
     private String sender;
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     public void sendVerifyMail(String email, String verificationCode) {
         Map<String, Object> variables = Map.of(
                 "email", email,
@@ -38,6 +41,7 @@ public class MailService {
     public void sendProblemMail(String email, Problem problem) {
         Map<String, Object> variables = Map.of(
                 "email", email,
+                "baseUrl", baseUrl,
                 "problem", problem,
                 "link", "https://www.acmicpc.net/problem/" + problem.getProblemId()
         );
@@ -46,7 +50,7 @@ public class MailService {
 
 
     public void sendGreetingMail(String email) {
-        Map<String, Object> variables = Map.of("email", email);
+        Map<String, Object> variables = Map.of("email", email, "baseUrl", baseUrl);
         sendMail("🎉 PS Everyday 구독을 환영합니다!", email, "mail/welcome-mail", variables);
     }
 

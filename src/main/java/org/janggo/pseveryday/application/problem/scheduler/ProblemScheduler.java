@@ -32,8 +32,8 @@ public class ProblemScheduler {
     private final JdbcRecommendationRepository jdbcRecommendationRepository;
     private final RecommendationRepository recommendationRepository;
 
-    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
-//    @Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
     @Transactional
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
@@ -51,7 +51,7 @@ public class ProblemScheduler {
             // 3. 추천된 문제 제외
             List<Problem> problemsToRecommend = problems.stream()
                     .filter(p -> !recommendedProblemIds.contains(p.getProblemId()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (problemsToRecommend.isEmpty()) {
                 // 필터링 후 추천할 문제가 없는 경우 (선호도 맞는 문제가 없거나, 모두 이미 추천된 경우)

@@ -91,16 +91,16 @@ public class SubscriberController {
     }
 
     @PostMapping("/unsubscribe")
-    public String unsubscribe(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
+    public String unsubscribe(@RequestParam("email") String email, Model model) {
         boolean unsubscribed = subscribeService.unsubscribe(email);
 
         if (unsubscribed) {
-            redirectAttributes.addFlashAttribute("message", "구독이 성공적으로 취소되었습니다.");
+            model.addAttribute("message", "구독이 성공적으로 취소되었습니다.");
         } else {
-            redirectAttributes.addFlashAttribute("message", "구독 정보를 찾을 수 없습니다.");
+            model.addAttribute("message", "구독 정보를 찾을 수 없습니다.");
         }
 
-        return "home";
+        return "mail/unsubscribe-result";
     }
 
     @GetMapping("/dashboard")
