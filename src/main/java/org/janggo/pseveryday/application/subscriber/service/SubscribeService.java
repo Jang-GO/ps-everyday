@@ -10,14 +10,17 @@ import org.janggo.pseveryday.domain.problem.entity.Tag;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
+import org.janggo.pseveryday.util.exception.custom.SubscriberNotFoundException;
+import org.janggo.pseveryday.util.message.FailureMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static org.janggo.pseveryday.util.message.FailureMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -90,7 +93,7 @@ public class SubscribeService {
     public Page<Recommendation> getRecommendationsByEmail(String email, Pageable pageable) {
         // 이메일로 Subscriber 찾기 (예시)
         Subscriber subscriber = subscriberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email: " + email));
+                .orElseThrow(() -> new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND.format(email)));
         // 해당 Subscriber의 Recommendation 목록을 페이징하여 조회
         return recommendationRepository.findBySubscriberOrderByRecommendedAtDesc(subscriber, pageable);
         // 또는 필요에 따라 다른 조회 메서드 사용

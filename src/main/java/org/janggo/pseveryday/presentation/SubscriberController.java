@@ -1,16 +1,21 @@
 package org.janggo.pseveryday.presentation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.janggo.pseveryday.application.subscriber.service.SubscribeService;
 import org.janggo.pseveryday.domain.problem.dto.ProblemLevel;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.recommendation.dto.RecommendationDto;
 import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
+import org.janggo.pseveryday.util.exception.custom.SubscriberNotFoundException;
+import org.janggo.pseveryday.util.message.FailureMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.janggo.pseveryday.util.message.FailureMessage.*;
+
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class SubscriberController {
 
     private final SubscribeService subscribeService;
@@ -70,18 +78,27 @@ public class SubscriberController {
 
 
     @PostMapping("/save-preferences")
-    public String savePreferences(@RequestParam("email") String email,
-                                  @RequestParam(value = "minTier", required = false) Integer minTier,
-                                  @RequestParam(value = "maxTier", required = false) Integer maxTier,
-                                  @RequestParam(value = "tags", required = false) List<Long> tagIds,
-                                  RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> savePreferences(@RequestParam("email") String email,
+                                          @RequestParam(value = "minTier", required = false) Integer minTier,
+                                          @RequestParam(value = "maxTier", required = false) Integer maxTier,
+                                          @RequestParam(value = "tags", required = false) List<Long> tagIds) {
+        Map<String, Object> response = new HashMap<>();
         try {
             subscribeService.subscribe(email, minTier , maxTier , tagIds);
-            redirectAttributes.addFlashAttribute("message", "구독이 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
+            response.put("success", true);
+            response.put("message", "구독이 완료되었습니다! 매일 8시에 알고리즘 문제를 보내드립니다.");
+            log.info("{} 님 구독 성공", email);
+            return ResponseEntity.ok(response); // 성공 시 200 OK 와 함께 JSON 응답 반환
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "구독 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
+            // 실제 운영 환경에서는 로깅 추가 권장
+            // log.error("구독 처리 중 오류 발생: email={}, error={}", email, e.getMessage());
+            response.put("success", false);
+            response.put("message", "구독 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
+            log.warn("{} 님 구독 실패, 사유 : {}", email, e.getMessage());
+            // 서버 내부 오류이므로 500 Internal Server Error 반환 고려
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return "redirect:/";
     }
 
     @GetMapping("/unsubscribe")
@@ -97,7 +114,7 @@ public class SubscriberController {
         if (unsubscribed) {
             model.addAttribute("message", "구독이 성공적으로 취소되었습니다.");
         } else {
-            model.addAttribute("message", "구독 정보를 찾을 수 없습니다.");
+            throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND.format(email));
         }
 
         return "mail/unsubscribe-result";
@@ -117,8 +134,6 @@ public class SubscriberController {
         model.addAttribute("email", email);
         // 모델에 DTO 리스트 대신 Page 객체 추가
         model.addAttribute("recommendationPage", recommendationDtoPage);
-        // 기존 recommendations 속성은 제거하거나 비워둠 (템플릿 호환성 위해)
-        // model.addAttribute("recommendations", recommendationDtoPage.getContent()); // 이렇게 하면 JS에서 문제 발생
 
         return "dashboard";
     }
