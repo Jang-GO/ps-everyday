@@ -1,6 +1,8 @@
 package org.janggo.pseveryday.application.subscriber.service;
 
 import lombok.RequiredArgsConstructor;
+import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
+import org.janggo.pseveryday.domain.recommendation.repository.RecommendationRepository;
 import org.janggo.pseveryday.domain.subscriber.repository.SubscriberRepository;
 import org.janggo.pseveryday.application.mail.service.MailService;
 import org.janggo.pseveryday.application.mail.service.VerificationService;
@@ -8,21 +10,25 @@ import org.janggo.pseveryday.domain.problem.entity.Tag;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class SubscribeService {
 
     private final VerificationService verificationService;
     private final MailService mailService;
     private final SubscriberRepository subscriberRepository;
     private final TagRepository tagRepository;
+    private final RecommendationRepository recommendationRepository;
 
     /**
      * 이메일 등록 및 인증 코드 전송
@@ -72,11 +78,21 @@ public class SubscribeService {
         mailService.sendGreetingMail(email);
     }
 
+    @Transactional
     public boolean unsubscribe(String email) {
         if (subscriberRepository.existsByEmail(email)) {
             subscriberRepository.deleteByEmail(email);
             return true;
         }
         return false;
+    }
+
+    public Page<Recommendation> getRecommendationsByEmail(String email, Pageable pageable) {
+        // 이메일로 Subscriber 찾기 (예시)
+        Subscriber subscriber = subscriberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email: " + email));
+        // 해당 Subscriber의 Recommendation 목록을 페이징하여 조회
+        return recommendationRepository.findBySubscriberOrderByRecommendedAtDesc(subscriber, pageable);
+        // 또는 필요에 따라 다른 조회 메서드 사용
     }
 }
