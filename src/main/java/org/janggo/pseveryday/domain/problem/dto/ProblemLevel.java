@@ -2,6 +2,9 @@ package org.janggo.pseveryday.domain.problem.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
+import org.janggo.pseveryday.util.message.FailureMessage;
+
+import static org.janggo.pseveryday.util.message.FailureMessage.*;
 
 @Getter
 public enum ProblemLevel {
@@ -54,6 +57,6 @@ public enum ProblemLevel {
                 return problemLevel;
             }
         }
-        throw new IllegalArgumentException("Invalid level code: " + level);
+        throw new IllegalArgumentException(ILLEGALARGUMENT_EX.format("잘못된 레벨 값" + level));
     }
 }
