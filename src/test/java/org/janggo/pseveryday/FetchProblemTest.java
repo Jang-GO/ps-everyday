@@ -7,6 +7,8 @@ import org.janggo.pseveryday.domain.problem.entity.Tag;
 import org.janggo.pseveryday.domain.problem.repository.ProblemRepository;
 import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.external.solvedac.client.SolvedAcClient;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,8 @@ class FetchProblemTest {
 
     @Test
 //    @Transactional
+    @DisplayName("DB에 존재하는 태그에 대하여, 태그에 맞는 모든 백준 문제 fetch 후 저장")
+    @Disabled
     void initProblems() {
         // 모든 태그에 대해 문제 업데이트
         List<Tag> tags = tagRepository.findAll();

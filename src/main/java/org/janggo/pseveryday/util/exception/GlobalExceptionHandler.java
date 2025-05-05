@@ -13,5 +13,11 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", ex.getMessage());
         return "error/subscriber-not-found";
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgument(IllegalArgumentException ex, Model model) {
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "error/illegal-argument";
+    }
 }
 
