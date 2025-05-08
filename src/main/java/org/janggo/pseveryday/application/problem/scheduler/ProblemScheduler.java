@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.janggo.pseveryday.application.mail.service.MailService;
 import org.janggo.pseveryday.domain.problem.entity.Problem;
 import org.janggo.pseveryday.domain.problem.repository.ProblemRepository;
+import org.janggo.pseveryday.domain.recommendation.dto.RecommendationProjection;
 import org.janggo.pseveryday.domain.recommendation.entity.Recommendation;
 import org.janggo.pseveryday.domain.recommendation.repository.JdbcRecommendationRepository; // 벌크 인서트 사용
 import org.janggo.pseveryday.domain.recommendation.repository.RecommendationRepository;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager; // 디버깅용
 
-import java.util.ArrayList; // 벌크 인서트 위해 사용
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,21 +43,22 @@ public class ProblemScheduler {
 
         log.info("문제 추천 스케줄러 시작. 총 {}명의 구독자 처리 예정.", subscribers.size());
 
+        Map<Long , Set<Long>> allSubscribersRecommendedProblemIds = loadRecommendationsToMem();
+
         for (Subscriber subscriber : subscribers) {
             try {
                 log.debug("구독자 {} 처리 시작. 현재 트랜잭션 활성 여부: {}", subscriber.getEmail(), TransactionSynchronizationManager.isActualTransactionActive()); // 트랜잭션 상태 확인 (디버깅용)
 
-                // 1. 해당 구독자에게 이미 추천된 문제 ID 목록 조회 (읽기 전용 작업)
-                // 이 작업은 별도 트랜잭션이 필요할 수 있으나, 보통 readOnly로 처리 가능
-                Set<Long> recommendedProblemIds = recommendationRepository.findRecommendedProblemIdsBySubscriber(subscriber);
-                log.debug("구독자 {}에게 이미 추천된 문제 ID 개수: {}", subscriber.getEmail(), recommendedProblemIds.size());
+
+                Set<Long> recommendedProblemIdsForThisSubscriber = allSubscribersRecommendedProblemIds.getOrDefault(subscriber.getId(), Collections.emptySet());
+                log.debug("구독자 {}에게 이미 추천된 문제 ID 개수 (메모리): {}", subscriber.getEmail(), recommendedProblemIdsForThisSubscriber.size());
 
                 // 2. 선호에 맞는 문제 후보 목록 조회 (읽기 전용 작업)
-                List<Problem> problems = filterProblems(subscriber); // filterProblems는 내부적으로 readOnly 트랜잭션 사용 권장
+                List<Problem> problems = filterProblems(subscriber); // filterProblems 는 내부적으로 readOnly 트랜잭션 사용 권장
 
                 // 3. 추천된 문제 제외
                 List<Problem> problemsToRecommend = problems.stream()
-                        .filter(p -> !recommendedProblemIds.contains(p.getProblemId()))
+                        .filter(p -> !allSubscribersRecommendedProblemIds.getOrDefault(subscriber.getId(),Collections.emptySet()).contains(p.getProblemId()))
                         .toList();
 
                 if (problemsToRecommend.isEmpty()) {
@@ -111,6 +110,24 @@ public class ProblemScheduler {
         log.info("문제 추천 스케줄러 종료. 성공: {}, 실패: {}, 저장 시도된 추천 수: {}", successCount, failCount, recommendationsToSave.size());
     }
 
+    private Map<Long, Set<Long>> loadRecommendationsToMem() {
+        Map<Long, Set<Long>> recommendedMap = new HashMap<>();
+
+        List<RecommendationProjection> projections = recommendationRepository.findAllSubscriberProblemPairs();
+
+        for (RecommendationProjection projection : projections) {
+            if (projection.getSubscriberId() != null && projection.getProblemId() != null) { // Null 방지
+                recommendedMap
+                        .computeIfAbsent(projection.getSubscriberId(), k -> new HashSet<>())
+                        .add(projection.getProblemId());
+            }
+        }
+
+        log.info("모든 구독자의 과거 추천 기록 (프로젝션) {}건 로드 완료 ({}명의 구독자 정보 포함).",
+                projections.size(), recommendedMap.size());
+        return recommendedMap;
+    }
+
     // 벌크 삽입을 위한 메소드, @Transactional 적용
     @Transactional
     protected void saveRecommendations(List<Recommendation> recommendations) {
@@ -144,6 +161,5 @@ public class ProblemScheduler {
             // findAll() 대신 페이징 또는 개수 제한 고려
             return problemRepository.findAll(); // 성능 이슈 주의
         }
-        // ... existing code ...
     }
 }

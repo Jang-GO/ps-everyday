@@ -29,5 +29,13 @@ spring:
             enable: true
             trust: smtp.naver.com
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, scheduledtasks
+  endpoint:
+    health:
+      show-details: always
 app:
   base-url: http://localhost:8080

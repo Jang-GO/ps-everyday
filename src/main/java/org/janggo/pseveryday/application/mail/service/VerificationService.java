@@ -26,6 +26,7 @@ public class VerificationService {
                 CODE_EXPIRE_SECONDS, TimeUnit.SECONDS);
 
         return verificationCode;
+        
     }
 
     private int generateVerificationCode() {
