@@ -28,12 +28,15 @@ spring:
           ssl:
             enable: true
             trust: smtp.naver.com
-
+  boot:
+    admin:
+      client:
+        url: http://localhost:8090
 management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics, scheduledtasks
+        include: "*"
   endpoint:
     health:
       show-details: always

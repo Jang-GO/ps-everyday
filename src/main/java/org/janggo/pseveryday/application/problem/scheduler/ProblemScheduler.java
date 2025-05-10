@@ -31,8 +31,8 @@ public class ProblemScheduler {
     private final JdbcRecommendationRepository jdbcRecommendationRepository; // 벌크 인서트 위해 사용
     private final RecommendationRepository recommendationRepository; // ID 조회 위해 사용
 
-    //    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
+        @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
     // @Transactional 제거: 전체 메소드 트랜잭션 해제
     public void scheduleRandomProblemMail() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
@@ -139,7 +139,6 @@ public class ProblemScheduler {
     // filterProblems 메소드는 읽기 전용 트랜잭션으로 유지하는 것이 좋음
     @Transactional(readOnly = true)
     protected List<Problem> filterProblems(Subscriber subscriber) {
-        // ... existing code ...
         boolean hasTierPreference = subscriber.getTierPreference() != null;
         boolean hasTagPreference = !subscriber.getTagPreferences().isEmpty();
 
