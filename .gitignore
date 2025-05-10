@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+logs/
+*.log
+
+### 환경 설정 ###
+application-*.yml
+.env
+smtp.yaml
