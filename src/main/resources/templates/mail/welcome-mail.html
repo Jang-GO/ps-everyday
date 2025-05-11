@@ -32,6 +32,7 @@
             <p style="font-size: 12px; color: #6c757d; margin-top: 10px;">
                 <a th:href="${baseUrl} + '/unsubscribe?email=' + ${email}" style="color: #6c757d; text-decoration: underline;">
                     <i class="fas fa-times-circle"></i> 구독 취소
+                    <a th:href="${baseUrl} + '/dashboard?email=' + ${email}" style="color: #6c757d; text-decoration: underline;"><i class="fas fa-chart-line"></i> 대시보드</a>
                 </a>
             </p>
         </div>

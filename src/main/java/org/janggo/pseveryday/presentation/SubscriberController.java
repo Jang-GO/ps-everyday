@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.janggo.pseveryday.util.message.FailureMessage.*;
 
@@ -124,6 +125,15 @@ public class SubscriberController {
     public String dashboard(@RequestParam("email") String email, Model model,
                             @PageableDefault Pageable pageable) {
 
+        // 구독자 정보 조회
+        Optional<Subscriber> subscriberOpt = subscribeService.findByEmail(email);
+        if (subscriberOpt.isEmpty()) {
+            throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND.format(email));
+        }
+
+        // 구독자 정보를 모델에 추가
+        Subscriber subscriber = subscriberOpt.get();
+        model.addAttribute("subscriber", subscriber);
 
         // 서비스 호출 시 pageable 전달
         Page<Recommendation> recommendationPage = subscribeService.getRecommendationsByEmail(email, pageable);
@@ -137,4 +147,23 @@ public class SubscriberController {
 
         return "dashboard";
     }
+
+    @GetMapping("/settings")
+    public String editPreferences(@RequestParam("email") String email, Model model) {
+        // 기존 구독 정보 조회
+        Optional<Subscriber> subscriber = subscribeService.findByEmail(email);
+        if (subscriber.isEmpty()) {
+            throw new SubscriberNotFoundException("구독자를 찾을 수 없습니다: " + email);
+        }
+
+        model.addAttribute("email", email);
+        model.addAttribute("selectedMinTier", subscriber.get().getTierPreference().getMinTier());
+        model.addAttribute("selectedMaxTier", subscriber.get().getTierPreference().getMaxTier());
+        model.addAttribute("selectedTags", subscriber.get().getTagPreferenceNames()); // tagId 리스트 반환하도록 구현
+        model.addAttribute("problemLevels", ProblemLevel.values());
+        model.addAttribute("availableTags", tagRepository.findAll());
+        return "settings"; // 선호정보 수정용 뷰
+    }
+
+
 }

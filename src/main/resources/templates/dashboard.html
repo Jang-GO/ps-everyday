@@ -366,6 +366,121 @@
             pointer-events: none;
             border-color: var(--light-gray);
         }
+
+        /* 사용자 설정 정보 카드 스타일 */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--light);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header span {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons .btn {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .user-preferences {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .preference-section {
+            display: flex;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .preference-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .preference-title {
+            width: 120px;
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .tier-display {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+
+        /* 반응형 사용자 설정 카드 */
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .action-buttons .btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            .preference-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .preference-title {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -376,7 +491,40 @@
         <p><span th:text="${email}"></span>님이 추천받으신 문제 목록입니다.</p>
     </div>
 
+    <!-- 사용자 설정 정보 카드 -->
     <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <span>내 설정 정보</span>
+                <div class="action-buttons">
+                    <a th:href="@{/settings(email=${email})}" class="btn btn-outline">설정 변경</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="user-preferences">
+                    <div class="preference-section">
+                        <div class="preference-title">이메일</div>
+                        <div th:text="${email}" class="tier-display"></div>
+                    </div>
+                    <div class="preference-section">
+                        <div class="preference-title">난이도 범위</div>
+                        <div class="tier-display">
+                            <span th:text="${subscriber.tierPreference.minTierName}"></span>
+                            <span> ~ </span>
+                            <span th:text="${subscriber.tierPreference.maxTierName}"></span>
+                        </div>
+                    </div>
+                    <div class="preference-section">
+                        <div class="preference-title">선호 태그</div>
+                        <div class="tag-list">
+                            <span th:each="tag : ${subscriber.tagPreferenceNames}" class="tag-badge" th:text="${tag}"></span>
+                            <span th:if="${subscriber.tagPreferenceNames.isEmpty()}" class="tag-badge">선택된 태그 없음</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div th:if="${recommendationPage == null || recommendationPage.isEmpty()}" class="empty-message">
             <p><i class="fas fa-box-open"></i> 아직 추천받은 문제가 없습니다.</p>
         </div>

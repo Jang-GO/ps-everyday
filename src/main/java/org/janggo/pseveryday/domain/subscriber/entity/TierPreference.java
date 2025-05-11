@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.janggo.pseveryday.domain.problem.dto.ProblemLevel;
 
 
 @Embeddable
@@ -15,15 +16,19 @@ public class TierPreference {
     private Integer minTier;
     private Integer maxTier;
 
-    public boolean hasPreference() {
-        return minTier != null || maxTier != null;
+    // 최소 티어 이름 가져오기
+    public String getMinTierName() {
+        if (minTier == null) {
+            return "선택 안함";
+        }
+        return ProblemLevel.getNameByLevel(minTier).orElse("선택 안함");
     }
 
-    public int getEffectiveMinTier() {
-        return minTier != null ? minTier : 1; // 기본값은 1 (브론즈5)
-    }
-
-    public int getEffectiveMaxTier() {
-        return maxTier != null ? maxTier : 30; // 기본값은 30 (루비1)
+    // 최대 티어 이름 가져오기
+    public String getMaxTierName() {
+        if (maxTier == null) {
+            return "선택 안함";
+        }
+        return ProblemLevel.getNameByLevel(maxTier).orElse("선택 안함");
     }
 }

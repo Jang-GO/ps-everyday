@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import org.janggo.pseveryday.util.message.FailureMessage;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import static org.janggo.pseveryday.util.message.FailureMessage.*;
 
 @Getter
@@ -59,4 +62,13 @@ public enum ProblemLevel {
         }
         throw new IllegalArgumentException(ILLEGALARGUMENT_EX.format("잘못된 레벨 값" + level));
     }
+
+    // level 값으로 이름 찾기
+    public static Optional<String> getNameByLevel(int level) {
+        return Arrays.stream(ProblemLevel.values())
+                .filter(pl -> pl.getLevel() == level)
+                .map(ProblemLevel::getDisplayName)
+                .findFirst();
+    }
+
 }

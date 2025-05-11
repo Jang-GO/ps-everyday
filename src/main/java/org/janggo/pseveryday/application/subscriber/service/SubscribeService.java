@@ -11,7 +11,6 @@ import org.janggo.pseveryday.domain.problem.repository.TagRepository;
 import org.janggo.pseveryday.domain.subscriber.entity.Subscriber;
 import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
 import org.janggo.pseveryday.util.exception.custom.SubscriberNotFoundException;
-import org.janggo.pseveryday.util.message.FailureMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -97,5 +96,9 @@ public class SubscribeService {
         // 해당 Subscriber의 Recommendation 목록을 페이징하여 조회
         return recommendationRepository.findBySubscriberOrderByRecommendedAtDesc(subscriber, pageable);
         // 또는 필요에 따라 다른 조회 메서드 사용
+    }
+
+    public Optional<Subscriber> findByEmail(String email) {
+        return subscriberRepository.findByEmail(email);
     }
 }
