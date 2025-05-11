@@ -164,6 +164,4 @@ public class SubscriberController {
         model.addAttribute("availableTags", tagRepository.findAll());
         return "settings"; // 선호정보 수정용 뷰
     }
-
-
 }

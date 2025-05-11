@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>서버 내부 오류 (500)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: 'Noto Sans KR', sans-serif; background-color: #f7f7fc; color: #212529; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; margin: 0;">
+<div style="background: white; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; overflow: hidden;">
+    <div style="padding: 30px; text-align: center; background: linear-gradient(135deg, #f72585, #7209b7); color: white;">
+        <h1 style="font-size: 28px; font-weight: 700; margin-top: 0; margin-bottom: 10px;"><i class="fas fa-cogs"></i> 500</h1>
+        <p style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">서버 내부 오류</p>
+        <p style="font-size: 16px; opacity: 0.9; margin-bottom: 0;">서비스 이용에 불편을 드려 죄송합니다. 잠시 후 다시 시도해 주세요.</p>
+    </div>
+
+    <div style="padding: 30px;">
+        <div style="background-color: #f8d7da; border-radius: 8px; padding: 20px; color: #721c24; margin-bottom: 25px; text-align: center;">
+            <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+            <!-- th:text="${errorMessage}" 와 같이 서버에서 전달된 에러 메시지를 표시할 수 있습니다. -->
+            <!-- 여기서는 일반적인 메시지를 표시합니다. -->
+            <span>일시적인 문제일 수 있으니, 잠시 후 다시 시도해주십시오.</span>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="/" style="display: inline-block; padding: 12px 24px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-size: 15px; font-weight: bold; transition: background-color 0.3s ease;">
+                <i class="fas fa-home" style="margin-right: 8px;"></i> 홈으로 돌아가기
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
