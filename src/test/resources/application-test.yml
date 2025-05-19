@@ -1,6 +1,8 @@
 spring:
   application:
     name: ps-everyday
+  config:
+      import: optional:file:.env[.properties]
   datasource:
     url: jdbc:mysql://${ps.db.endpoint}/${ps.db.dbname}?useSSL=false&serverTimezone=Asia/Seoul
     username: ${MYSQL_USERNAME}
@@ -25,12 +27,13 @@ spring:
             enable: false
           starttls:
             enable: false
+  boot:
+    admin:
+      client:
+        url: ${admin-url}
 
-
-boj:
-  page:
-    start: 1
-    end: 320
+app:
+  base-url: ${base-url}
 
 logging:
   level:

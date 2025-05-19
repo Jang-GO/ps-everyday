@@ -9,6 +9,8 @@ import org.janggo.pseveryday.domain.subscriber.entity.TierPreference;
 import org.janggo.pseveryday.domain.subscriber.repository.SubscriberRepository;
 import org.janggo.pseveryday.domain.subscriber.repository.TagPreferenceRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +24,7 @@ public class TestSubscriberGenerator {
     private final TagRepository tagRepository;
     private final TagPreferenceRepository tagPreferenceRepository;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void generateTestSubscribers(int count) {
         List<Tag> allTags = tagRepository.findAll();
         Random random = new Random();

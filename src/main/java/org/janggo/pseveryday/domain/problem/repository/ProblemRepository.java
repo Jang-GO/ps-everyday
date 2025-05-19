@@ -1,6 +1,7 @@
 package org.janggo.pseveryday.domain.problem.repository;
 
 import org.janggo.pseveryday.domain.problem.entity.Problem;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,5 +30,9 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
             "              WHERE tp.subscriber.id = :subscriberId)")
     List<Problem> findByTagPreferences(@Param("subscriberId") Long subscriberId);
 
+    @EntityGraph(attributePaths = {"problemTags", "problemTags.tag"})
     List<Problem> findByLevelBetween(int minLevel, int maxLevel);
+
+    @EntityGraph(attributePaths = {"problemTags", "problemTags.tag"})
+    List<Problem> findAll();
 }
